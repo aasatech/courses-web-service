@@ -1,3 +1,5 @@
+import Course from "../models/Course"
+
 
 export const list = (req, res) => {
 
