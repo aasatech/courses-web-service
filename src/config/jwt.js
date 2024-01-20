@@ -11,7 +11,7 @@ export const generateToken = (user) => {
       authConfig.secret,
       {
         algorithm: authConfig.algorithms[0],
-        expiresIn: "1h",
+        expiresIn: "9000",
       },
       (err, token) => {
         if (err) {
@@ -28,4 +28,3 @@ export const generateToken = (user) => {
 };
 
 export const verifyToken = async (token) => jwt.verify(token, authConfig.secret);
-export const clearSession = token => redis.invokeToken(token);

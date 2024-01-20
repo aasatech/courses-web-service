@@ -1,40 +1,29 @@
-import redis from "../config/redis";
-import { clearSession } from "../app/helper/utils";
-
-const authToken = async cookie => {
-  const token = await redis.getAsync(`session:${cookie}`);
-  return token;
-};
+import { verifyToken } from '../config/jwt'
+import User from '../app/models/User'
 export default async (req, res, next) => {
-  const cookie = req.cookies["__bene_store_auth__"];
-  if (cookie) {
-    const token = await authToken(cookie);
-    if (token) {
-      const user = JSON.parse(token);
-      res.locals.isSignIn = true;
-      res.locals.currentUser = user;
-      if (user.allowPasswordChange) {
-        res.locals.hideSideMenu = true;
-        if (req.path !== "/change_credential")
-          return res.redirect("/auth/change_credential");
-      } else {
-        if (req.path === "/change_credential") {
-          return res.redirect("/");
-        }
-      }
+  const authorize = req.headers['authorization']
 
-      return next();
-    } else {
-      clearSession(req, res);
+  const token = authorize.replace('Bearer ', '')
+
+  try {
+    const decoded = await verifyToken(token)
+
+    if (!decoded) {
+      return res.status(401).json({ message: 'Unauthorize' })
     }
-  }
-  res.redirect("/auth/login");
-};
 
-export const authSession = async (req, res, next) => {
-  const cookie = req.cookies["__bene_store_auth__"];
-  if (cookie && (await authToken(cookie))) {
-    return res.redirect("/");
+    const user = await User.query().findOne({
+      id: decoded.id,
+      email: decoded.email
+    })
+
+    if (!user) {
+      return res.status(401).json({ message: 'Unauthorize' })
+    }
+
+    req.decoded = decoded
+  } catch (error) {
+    return res.status(401).json({ message: 'Unauthorize' })
   }
-  next();
-};
+  next()
+}

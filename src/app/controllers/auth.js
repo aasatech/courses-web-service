@@ -10,15 +10,10 @@ export const register = async (req, res) => {
 
     const result = validationResult(req)
 
-    // console.log(result)
     if(!result.isEmpty()){
       return res.status(400).json({errors: _.groupBy(result.array(), 'path')})
     }
-
-    if(!password) return res.status(400).json({msg: "Password is missing"})
     
-    if(password !== password_confirmation) return res.status(400).json({msg: "Password is not match"})
-
     const encryptedPassword = await User.generatePassword(password)
 
     const user = await User.query().insert({
@@ -38,15 +33,25 @@ export const register = async (req, res) => {
 export const login  =async (req, res) => {
   try {
     const {email, password} = req.body
+
+    // validate with express validator
+    const result = validationResult(req)
+
+    if(!result.isEmpty()){
+      return res.status(400).json({message:"Invalid email or password"})
+    }
     
+    // find user
     const user = await User.query().findOne({email})
 
-    if(!user) return res.status(400).json({msg: "Invalid email 1 or password"})
+    if(!user) return res.status(400).json({message: "Invalid email or password"})
 
+    // check password
     const isValid = await user.comparePassword(password)
 
-    if(!isValid) return res.status(400).json({msg: "Invalid email  2or password"})
+    if(!isValid) return res.status(400).json({message: "Invalid email or password"})
 
+    // generate token
     const token = await generateToken(user)
 
     res.status(200).json({token})
@@ -55,4 +60,6 @@ export const login  =async (req, res) => {
     res.status(500).json({error: error.message})    
   }
 }
+
+
 

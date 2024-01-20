@@ -7,6 +7,15 @@ class User extends Model{
     return "users"
   }
 
+  $formatJson(json) {
+    json = super.$formatJson(json);
+    
+    delete json.password_encrypted
+    delete json.created_at
+    delete json.updated_at
+    return json
+  }
+
   static generatePassword(password){
     return  bcrypt.hashSync(password, saltRound) 
   }
