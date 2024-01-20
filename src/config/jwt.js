@@ -11,7 +11,7 @@ export const generateToken = (user) => {
       authConfig.secret,
       {
         algorithm: authConfig.algorithms[0],
-        expiresIn: "9000",
+        expiresIn: "2days",
       },
       (err, token) => {
         if (err) {

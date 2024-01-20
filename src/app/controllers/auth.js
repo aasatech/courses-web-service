@@ -6,7 +6,7 @@ import _ from "lodash"
 
 export const register = async (req, res) => {
   try{
-    const {name,username, email, password, password_confirmation} = req.body
+    const {name,username, email, password} = req.body
 
     const result = validationResult(req)
 
