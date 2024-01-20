@@ -3,11 +3,9 @@
  * @returns { Promise<void> }
  */
 exports.up = function(knex) {
-  return knex.schema.createTable("users", table=>{
-    table.increments("id").primary(),
-    table.string("name"),
-    table.string("email").unique(),
-    table.string("password_encryped"),
+  return knex.schema.createTable('tags',table => {
+    table.increments('id')
+    table.string('name')
     table.timestamps(true, true)
   })
 };
@@ -17,5 +15,5 @@ exports.up = function(knex) {
  * @returns { Promise<void> }
  */
 exports.down = function(knex) {
-  return knex.schema.dropTableIfExists("users")
+  return knex.schema.dropTableIfExists('tags')
 };
