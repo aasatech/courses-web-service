@@ -55,7 +55,7 @@ export const loginValidator = checkSchema({
     isEmail: true,
     isEmpty: false,
   },
-  password_encrypted: {
+  password: {
     errorMessage: "Password is required",
     isLength: {
       options: { min: 8 },
