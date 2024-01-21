@@ -19,7 +19,7 @@ class Course extends Model{
         relation: Model.ManyToManyRelation,
         modelClass: __dirname+"/Tag",
         join: {
-          from: "course.id",
+          from: "courses.id",
           through: {
             from: "course_tags.course_id",
             to: "course_tags.tag_id"

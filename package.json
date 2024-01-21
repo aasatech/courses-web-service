@@ -41,7 +41,7 @@
     "nodemon": "^2.0.15"
   },
   "scripts": {
-    "start": "nodemon --exec babel-node src/server.js",
+    "start": "nodemon --exec babel-node src/server.js DEBUG=knex:tx",
     "server:prod": "babel-node src/server.js",
     "clean": "rimraf dist",
     "build": "babel ./src --out-dir dist --copy-files",
