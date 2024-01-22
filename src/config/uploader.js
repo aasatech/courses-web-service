@@ -4,8 +4,7 @@ import fs from 'fs'
 import multer from 'multer'
 import path from 'path'
 import multerS3 from 'multer-s3'
-import { nanoid } from 'nanoid'
-import { generateMD5, getExtension } from '../app/helper/utils'
+import { generateMD5, getExtension, randomName } from '../app/helper/utils'
 
 const ENV = process.env
 
@@ -17,8 +16,12 @@ const config = {
   }
 }
 
-const s3 = new AWS.S3(config)
-const bucket = ENV.FOG_DIRECTORY
+let s3 = null
+let bucket = ''
+if (process.env.STORAGE === 's3') {
+  s3 = new AWS.S3(config)
+  bucket = ENV.FOG_DIRECTORY
+}
 
 const checkAvatarFileType = (req, file, cb) => {
   const fileTypes = /jpeg|png|jpg/
@@ -43,11 +46,11 @@ const getBucketPath = file => {
 
 const diskStorage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, process.cwd() + '/storages/')
+    cb(null, process.cwd() + '/storages/uploads')
   },
   filename: function (req, file, cb) {
     const extension = getExtension(file.originalname)
-    const uuid = nanoid()
+    const uuid = randomName()
     const key = generateMD5(`${+new Date()}${uuid}`)
     const filePath = `${key}${extension}`
 
@@ -65,7 +68,7 @@ const s3Storage = multerS3({
   },
   key: async (req, file, cb) => {
     const extension = getExtension(file.originalname)
-    const uuid = nanoid()
+    const uuid = randomName()
     const key = generateMD5(`${+new Date()}${uuid}`)
     const filePath = `${getBucketPath(file)}${key}${extension}`
 

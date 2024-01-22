@@ -1,9 +1,9 @@
 import { verifyToken } from '../config/jwt'
 import User from '../app/models/User'
 export default async (req, res, next) => {
-  const authorize = req.headers['authorization']
+  const authorization = req.headers['authorization']
 
-  const token = authorize.replace('Bearer ', '')
+  const token = authorization?.replace('Bearer ', '')
 
   try {
     const decoded = await verifyToken(token)
@@ -25,5 +25,6 @@ export default async (req, res, next) => {
   } catch (error) {
     return res.status(401).json({ message: 'Unauthorize' })
   }
+
   next()
 }

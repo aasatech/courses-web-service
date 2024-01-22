@@ -16,5 +16,6 @@ app.use('/courses', courses)
 app.use('/categories', categories)
 app.use('/tags', tags)
 app.use('/users', user)
+app.get('/storages/uploads')
 
 export default app
