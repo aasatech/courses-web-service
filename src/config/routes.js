@@ -8,7 +8,7 @@ export default app => {
   app.use('/api/v1', routers)
 
   app.use((req, res, next) => {
-    return res.status(404).json({ message: "Not found" })
+    return res.status(404).json({ message: 'Not found' })
   })
 
   app.use((err, req, res, next) => {

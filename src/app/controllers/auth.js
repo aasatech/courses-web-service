@@ -43,13 +43,13 @@ export const login = async (req, res) => {
     const user = await User.query().findOne({ email })
 
     if (!user)
-      return res.status(400).json({ message: 'Invalid email or password' })
+      return res.status(400).json({ message: 'Invalid login credentials' })
 
     // check password
     const isValid = await user.comparePassword(password)
 
     if (!isValid)
-      return res.status(400).json({ message: 'Invalid email or password' })
+      return res.status(400).json({ message: 'Invalid login credentials' })
 
     // generate token
     const token = await generateToken(user)
