@@ -10,7 +10,7 @@ router.get('/', authMiddleware, controller.list)
 router.post(
   '/',
   authMiddleware,
-  // courseValidator,
+  courseValidator,
   upload.any(),
   controller.create
 )

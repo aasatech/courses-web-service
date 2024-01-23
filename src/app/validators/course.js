@@ -3,11 +3,7 @@ import { checkSchema } from 'express-validator'
 export const courseValidator = checkSchema({
   name: {
     notEmpty: true,
-    errorMessage: 'Course name is required',
-    isLength: {
-      options: { min: 5, max: 50 },
-      errorMessage: 'Name should be between 5 to 50 characters'
-    }
+    errorMessage: 'Course name is required'
   },
   category_id: {
     notEmpty: true,

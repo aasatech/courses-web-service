@@ -1,5 +1,6 @@
 import { verifyToken } from '../config/jwt'
 import User from '../app/models/User'
+
 export default async (req, res, next) => {
   const authorization = req.headers['authorization']
 
@@ -18,7 +19,7 @@ export default async (req, res, next) => {
     })
 
     if (!user) {
-      return res.status(401).json({ message: 'Unauthorize' })
+      return res.status(401).json({ message: 'User not found' })
     }
 
     req.decoded = decoded
