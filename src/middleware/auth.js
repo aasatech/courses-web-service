@@ -19,10 +19,12 @@ export default async (req, res, next) => {
     })
 
     if (!user) {
-      return res.status(401).json({ message: 'User not found' })
+      return res.status(401).json({ message: 'Unauthorize' })
     }
 
     req.decoded = decoded
+
+    req.account = user
   } catch (error) {
     return res.status(401).json({ message: 'Unauthorize' })
   }

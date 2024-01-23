@@ -6,7 +6,7 @@ import account from './account'
 import courses from './courses'
 import categories from './categories'
 import tags from './tags'
-import user from './user'
+import users from './users'
 
 const app = express.Router()
 
@@ -15,7 +15,6 @@ app.use('/account', account)
 app.use('/courses', courses)
 app.use('/categories', categories)
 app.use('/tags', tags)
-app.use('/users', user)
-app.get('/storages/uploads')
+app.use('/users', users)
 
 export default app

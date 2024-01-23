@@ -46,6 +46,8 @@ export const create = async (req, res) => {
 
     const validateResult = validationResult(req)
 
+    console.log(validateResult.array())
+
     if (!validateResult.isEmpty()) {
       return res
         .status(400)
