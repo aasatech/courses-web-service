@@ -2,11 +2,11 @@ import { checkSchema } from 'express-validator'
 
 export const courseValidator = checkSchema({
   name: {
-    notEmpty: true,
+    isEmpty: false,
     errorMessage: 'Course name is required'
   },
   category_id: {
-    notEmpty: true,
+    isEmpty: false,
     errorMessage: 'Category is required'
   },
   'chapters.*.name': {
