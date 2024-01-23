@@ -85,7 +85,6 @@ export const update = async (req, res) => {
 export const destroy = async (req, res) => {
   try {
     const { id } = req.params
-    const decoded = req.decoded
 
     const user = await User.query().findById(id)
 
