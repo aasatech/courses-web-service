@@ -1,49 +1,51 @@
-require("dotenv").config();
-const pg = require("pg").types;
-const { setTypeParser, builtins } = pg;
+require('dotenv').config()
+const pg = require('pg').types
+const { setTypeParser, builtins } = pg
 const typesToReset = [
   builtins.DATE,
   builtins.TIME,
   builtins.TIMETZ,
   builtins.TIMESTAMP,
   builtins.TIMESTAMPTZ
-];
-function resetPgDateParsers() {
+]
+function resetPgDateParsers () {
   for (const pgType of typesToReset) {
-    setTypeParser(pgType, val => String(val)); // like noParse() function underhood pg lib
+    setTypeParser(pgType, val => String(val)) // like noParse() function underhood pg lib
   }
 }
 
 const configTimezone = {
-  afterCreate: function(conn, done) {
-    conn.query('SET timezone="Asia/Tokyo";', function(err) {
-      done(err, conn);
-    });
+  afterCreate: function (conn, done) {
+    conn.query('SET timezone="Asia/Tokyo";', function (err) {
+      done(err, conn)
+    })
   }
-};
+}
 
-resetPgDateParsers();
+resetPgDateParsers()
 const connection = {
-  client: "pg",
-  connection: {
-    host: process.env.DATABASE_HOST || "localhost",
-    user: process.env.DATABASE_USERNAME,
-    password: process.env.DATABASE_PASSWORD || "",
-    database: process.env.DATABASE_NAME,
-    timezone: "Japan"
-  },
+  client: 'pg',
+  connection: process.env.DATABASE_URL,
+  // connection: {
+  //   host: process.env.DATABASE_HOST || 'localhost',
+  //   user: process.env.DATABASE_USERNAME,
+  //   password: process.env.DATABASE_PASSWORD || '',
+  //   database: process.env.DATABASE_NAME,
+  //   URL: process.env.DATABASE_URL,
+  //   timezone: 'Japan'
+  // },
   pool: { min: 0, max: 10, ...configTimezone }
-};
+}
 
-const rootPath = process.cwd();
+const rootPath = process.cwd()
 const migrations = {
   migrations: {
-    directory: rootPath + "/src/db/migrations"
+    directory: rootPath + '/src/db/migrations'
   },
   seeds: {
-    directory: rootPath + "/src/db/seeds"
+    directory: rootPath + '/src/db/seeds'
   }
-};
+}
 
 module.exports = {
   development: {
@@ -60,4 +62,4 @@ module.exports = {
       max: 10
     }
   }
-};
+}
