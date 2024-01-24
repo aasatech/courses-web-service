@@ -5,8 +5,6 @@ logs/*
 .bundle/
 log/
 dump.rdb
-!storages/.keep
-storages/*
 !tmp/.keep
 tmp/*
 .DS_Store
