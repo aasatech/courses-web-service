@@ -12,24 +12,20 @@ export const list = async (req, res) => {
   try {
     const pages = req.query.pages || 0
     const pageSize = req.query.pageSize || 5
-    const tags = req.query.tags
-    const category_id = req.query.category
+    const tags = Array.from(req.query.tags || [])
+    const categoryIds = Array.from(req.query.category_ids || [])
     const orderBy = req.query.orderBy
 
-    let courses = Course.query()
+    console.log(tags)
 
-    // filter tags
-    if (tags) courses.modify('filterTags', JSON.parse(tags))
+    let courses = await Course.query()
+      .modify('filterTags', tags)
+      .modify('filterCategories', categoryIds)
+      .modify('orderByDate', orderBy)
+      .distinctOn('id')
+      .page(pages, pageSize)
 
-    // filter category
-    if (category_id) courses.modify('filterCategories', JSON.parse(category_id))
-
-    // order by date
-    if (orderBy) courses.modify('orderByDate', orderBy)
-
-    const result = await courses.distinctOn('id').page(pages, pageSize)
-
-    res.status(200).json(result)
+    res.status(200).json(courses)
   } catch (error) {
     res.status(500).json({ error: error.message })
   }

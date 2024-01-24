@@ -10,16 +10,16 @@ class Course extends Model {
       query.select('id', 'name', 'summary', 'image', 'created_at', 'updated_at')
     },
 
-    filterCategories (query, category_id) {
-      query.whereIn('category_id', category_id)
+    filterCategories (query, categoryIds) {
+      if (categoryIds.length) query.whereIn('category_id', categoryIds)
     },
 
     filterTags (query, tags) {
-      query.joinRelated('tags').whereIn('tags.id', tags)
+      if (tags.length) query.joinRelated('tags').whereIn('tags.id', tags)
     },
 
     orderByDate (query, order) {
-      query.orderBy('id', order)
+      if (order) query.orderBy('id', order)
     }
   }
 
