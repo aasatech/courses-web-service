@@ -14,10 +14,13 @@ export const profile = async (req, res) => {
 
 export const list = async (req, res) => {
   try {
-    let users = await User.query().withDeleted()
+    let users = await User.query()
 
-    const result = users
-    res.status(200).json(result)
+    if (req.query.deleted) {
+      users = await User.query().withDeleted()
+    }
+
+    res.status(200).json(users)
   } catch (error) {
     res.status(500).json({ error: error.message })
   }
