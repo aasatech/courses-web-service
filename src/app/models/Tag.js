@@ -5,6 +5,19 @@ class Tag extends Model {
     return 'tags'
   }
 
+  static modifiers = {
+    defaultSelects (query) {}
+  }
+
+  $formatJson (json) {
+    json = super.$formatJson(json)
+
+    delete json.deleted_at
+    delete json.created_at
+    delete json.updated_at
+    return json
+  }
+
   static get softDelete () {
     return true
   }

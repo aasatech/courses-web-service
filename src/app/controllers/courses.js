@@ -11,19 +11,23 @@ import path from 'path'
 export const list = async (req, res) => {
   try {
     const pages = req.query.pages || 0
+    const pageSize = req.query.pageSize || 5
     const tags = req.query.tags
     const category_id = req.query.category
+    const orderBy = req.query.orderBy
+
     let courses = Course.query()
 
-    if (tags) {
-      courses.joinRelated('tags').whereIn('tags.id', JSON.parse(tags))
-    }
+    // filter tags
+    if (tags) courses.modify('filterTags', JSON.parse(tags))
 
-    if (category_id) {
-      courses.whereIn('category_id', JSON.parse(category_id))
-    }
+    // filter category
+    if (category_id) courses.modify('filterCategories', JSON.parse(category_id))
 
-    const result = await courses.page(pages, 5)
+    // order by date
+    if (orderBy) courses.modify('orderByDate', orderBy)
+
+    const result = await courses.distinctOn('id').page(pages, pageSize)
 
     res.status(200).json(result)
   } catch (error) {
@@ -34,7 +38,7 @@ export const list = async (req, res) => {
 export const listWithChildren = async (req, res) => {
   try {
     const coursesWithChildren = await Course.query()
-      .withGraphJoined('[tags,chapters.[lessons]]')
+      .withGraphJoined('[tags,chapters.[lessons]] ')
       .page(pages, 10)
 
     res.status(200).json(coursesWithChildren)
@@ -49,7 +53,7 @@ export const show = async (req, res) => {
 
     const course = await Course.query()
       .findById(id)
-      .withGraphJoined('[tags, chapters.[lessons]]')
+      .withGraphJoined('[user, category,tags, chapters.[lessons]]')
 
     if (!course) return res.status(404).json({ message: 'Course not found' })
 

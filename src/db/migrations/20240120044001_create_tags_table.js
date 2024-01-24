@@ -4,7 +4,7 @@
  */
 exports.up = function (knex) {
   return knex.schema.createTable('tags', table => {
-    table.increments('id')
+    table.increments('id').primary()
     table.string('name')
     table.timestamp('deleted_at')
     table.timestamps(true, true)
