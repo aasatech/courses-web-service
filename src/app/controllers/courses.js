@@ -43,9 +43,8 @@ export const create = async (req, res) => {
     const { id } = req.decoded
     const file = req.files
 
+    console.log(data)
     const validateResult = validationResult(req)
-
-    console.log(validateResult.array())
 
     if (!validateResult.isEmpty()) {
       return res
@@ -77,7 +76,6 @@ export const create = async (req, res) => {
     // chapters
     if (data.chapters) {
       // lesson image
-
       let lessonImageIndex
 
       if (file.length) {
