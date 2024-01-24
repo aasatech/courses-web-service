@@ -14,6 +14,7 @@ class User extends Model {
   $formatJson (json) {
     json = super.$formatJson(json)
 
+    delete json.deleted_at
     delete json.password_encrypted
     delete json.created_at
     delete json.updated_at
