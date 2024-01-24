@@ -18,7 +18,7 @@ exports.up = function (knex) {
       .references('id')
       .inTable('users')
       .onDelete('cascade')
-    table.timestamp(true, true)
+    table.timestamps(true, true)
   })
 }
 
