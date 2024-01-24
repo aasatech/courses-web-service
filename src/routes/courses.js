@@ -8,7 +8,7 @@ import adminAuth from '../middleware/adminAuth'
 const router = express.Router()
 
 router.get('/', controller.list)
-router.get('/withChil', controller.listWithChildren)
+router.get('/withChild', controller.listWithChildren)
 router.get('/:id', controller.show)
 
 router.post(
