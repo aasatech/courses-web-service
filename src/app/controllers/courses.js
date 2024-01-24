@@ -11,12 +11,21 @@ import path from 'path'
 export const list = async (req, res) => {
   try {
     const pages = req.query.pages || 0
+    const tags = req.query.tags
+    const category_id = req.query.category
+    let courses = Course.query()
 
-    const filter = req.query.filter
+    if (tags) {
+      courses.joinRelated('tags').whereIn('tags.id', JSON.parse(tags))
+    }
 
-    const courses = await Course.query().page(pages, 5)
+    if (category_id) {
+      courses.whereIn('category_id', JSON.parse(category_id))
+    }
 
-    res.status(200).json(courses)
+    const result = await courses.page(pages, 5)
+
+    res.status(200).json(result)
   } catch (error) {
     res.status(500).json({ error: error.message })
   }
