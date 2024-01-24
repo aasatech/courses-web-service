@@ -7,9 +7,6 @@ import adminAuth from '../middleware/adminAuth'
 
 const router = express.Router()
 
-router.get('/profile', authMiddleware, controller.listTeacherCourse)
-router.get('/profile/:id', authMiddleware, controller.showTeacherCourse)
-
 router.get('/', controller.list)
 router.get('/:id', controller.show)
 

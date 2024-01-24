@@ -36,37 +36,6 @@ export const show = async (req, res) => {
   }
 }
 
-export const listTeacherCourse = async (req, res) => {
-  try {
-    const { id } = req.decoded
-
-    const courses = await Course.query()
-      .where('user_id', id)
-      .withGraphJoined('[tags,chapters.[lessons]]')
-
-    res.status(200).json(courses)
-  } catch (error) {
-    res.status(500).json({ error: error.message })
-  }
-}
-
-export const showTeacherCourse = async (req, res) => {
-  try {
-    const { id } = req.params
-
-    const course = await Course.query()
-      .where('user_id', req.decoded.id)
-      .findById(id)
-      .withGraphJoined('[tags, chapters.[lessons]]')
-
-    if (!course) return res.status(404).json({ message: 'Course not found' })
-
-    res.status(200).json(course)
-  } catch (error) {
-    res.status(500).json({ error: error.message })
-  }
-}
-
 export const create = async (req, res) => {
   const trx = await Course.startTransaction()
   try {
