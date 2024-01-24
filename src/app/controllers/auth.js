@@ -13,6 +13,7 @@ export const register = async (req, res) => {
       return res.status(400).json({ errors: _.groupBy(result.array(), 'path') })
     }
 
+    //
     const existingUser = await User.query().findOne({ email })
 
     if (existingUser) {
