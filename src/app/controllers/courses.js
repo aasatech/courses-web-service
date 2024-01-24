@@ -45,8 +45,6 @@ export const create = async (req, res) => {
 
     const validateResult = validationResult(req)
 
-    console.log(validateResult.array())
-
     if (!validateResult.isEmpty()) {
       return res
         .status(400)
@@ -145,9 +143,7 @@ export const update = async (req, res) => {
     const { id } = req.params
     const file = req.files
 
-    let course = await Course.query(trx)
-      .where('user_id', req.decoded.id)
-      .findById(id)
+    let course = await Course.query(trx).findById(id)
 
     if (!course) return res.status(404).json({ message: 'Course not found' })
 
@@ -214,8 +210,6 @@ export const update = async (req, res) => {
               course_id: course.id
             })
           }
-
-          console.log(chapter)
 
           //lesson
           if (chapterData.lessons) {
@@ -302,9 +296,7 @@ export const destroy = async (req, res) => {
   try {
     const { id } = req.params
 
-    const course = await Course.query()
-      .where('user_id', req.decoded.id)
-      .deleteById(id)
+    const course = await Course.query().deleteById(id)
 
     if (!course) return res.status(404).json({ message: 'Course not found' })
 
