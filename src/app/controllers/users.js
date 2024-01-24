@@ -2,16 +2,6 @@ import { validationResult } from 'express-validator'
 import User from '../models/User'
 import _ from 'lodash'
 
-export const profile = async (req, res) => {
-  try {
-    const user = await User.query().findById(req.decoded.id)
-
-    res.status(200).json(user)
-  } catch (error) {
-    res.status(500).json({ errors: error.message })
-  }
-}
-
 export const list = async (req, res) => {
   try {
     let users = await User.query()
@@ -26,13 +16,33 @@ export const list = async (req, res) => {
   }
 }
 
-export const updateProfile = async (req, res) => {
+export const show = async (req, res) => {
+  try {
+    const { id } = req.params
+
+    const user = await User.query().findById(id)
+
+    if (!user) return res.status(404).json({ message: 'User not found' })
+
+    res.status(200).json(user)
+  } catch (error) {
+    res.status(500).json({ error: error.message })
+  }
+}
+
+export const create = async (req, res) => {
   try {
     const { name, username, email, password } = req.body
 
+    const result = validationResult(req)
+
+    if (!result.isEmpty()) {
+      return res.status(400).json({ errors: _.groupBy(result.array(), 'path') })
+    }
+
     const password_encrypted = User.generatePassword(password)
 
-    const user = await User.query().patchAndFetchById(req.decoded.id, {
+    const user = await User.query().insert({
       name,
       username,
       email,
@@ -48,8 +58,6 @@ export const updateProfile = async (req, res) => {
 export const deleteProfile = async (req, res) => {
   try {
     const user = await User.query().deleteById(req.decoded.id)
-
-    if (!user) return res.status(404).json({ message: 'User not found' })
 
     res.status(200).json({ message: 'Account delete succesfully' })
   } catch (error) {
