@@ -3783,6 +3783,11 @@ object.getownpropertydescriptors@^2.0.3:
     es-abstract "^1.22.1"
     safe-array-concat "^1.0.0"
 
+objection-paranoia@^1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/objection-paranoia/-/objection-paranoia-1.0.2.tgz#6b893b1a47fce127e5d50b06ed9ee23bbd0df6be"
+  integrity sha512-ZupzygbrK6Qr4HunSln4vVdnWQCq128xkWU71Y+R+ek7rt85lCXgS/bbdvr0qCiGlWyrS7AYTIKihk8megxiog==
+
 objection@^3.0.1:
   version "3.1.3"
   resolved "https://registry.yarnpkg.com/objection/-/objection-3.1.3.tgz#8186ed2019225b987fbecb9ee67d25c60cfac458"

@@ -14,7 +14,11 @@ export const profile = async (req, res) => {
 
 export const list = async (req, res) => {
   try {
-    const users = await User.query()
+    let users = await User.query()
+
+    if (req.query.deleted) {
+      users = await User.query().withDeleted()
+    }
 
     res.status(200).json(users)
   } catch (error) {
@@ -44,6 +48,8 @@ export const updateProfile = async (req, res) => {
 export const deleteProfile = async (req, res) => {
   try {
     const user = await User.query().deleteById(req.decoded.id)
+
+    if (!user) return res.status(404).json({ message: 'User not found' })
 
     res.status(200).json({ message: 'Account delete succesfully' })
   } catch (error) {

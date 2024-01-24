@@ -10,11 +10,9 @@ import path from 'path'
 
 export const list = async (req, res) => {
   try {
-    const { id } = req.decoded
-
-    const courses = await Course.query()
-      .where('user_id', id)
-      .withGraphJoined('[tags,chapters.[lessons]]')
+    const courses = await Course.query().withGraphJoined(
+      '[tags,chapters.[lessons]]'
+    )
 
     res.status(200).json(courses)
   } catch (error) {
@@ -26,7 +24,6 @@ export const show = async (req, res) => {
     const { id } = req.params
 
     const course = await Course.query()
-      .where('user_id', req.decoded.id)
       .findById(id)
       .withGraphJoined('[tags, chapters.[lessons]]')
 
@@ -44,9 +41,8 @@ export const create = async (req, res) => {
     const { id } = req.decoded
     const file = req.files
 
+    console.log(data)
     const validateResult = validationResult(req)
-
-    console.log(validateResult.array())
 
     if (!validateResult.isEmpty()) {
       return res
@@ -78,7 +74,6 @@ export const create = async (req, res) => {
     // chapters
     if (data.chapters) {
       // lesson image
-
       let lessonImageIndex
 
       if (file.length) {

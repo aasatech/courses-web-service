@@ -7,7 +7,8 @@ import adminAuth from '../middleware/adminAuth'
 
 const router = express.Router()
 
-router.get('/', authMiddleware, controller.list)
+router.get('/', controller.list)
+router.get('/:id', controller.show)
 router.post(
   '/',
   authMiddleware,
@@ -16,7 +17,6 @@ router.post(
   upload.any(),
   controller.create
 )
-router.get('/:id', authMiddleware, controller.show)
 router.put(
   '/:id',
   authMiddleware,

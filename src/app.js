@@ -11,6 +11,7 @@ import params from './packages/strong-params'
 import compression from 'compression'
 import helmet from 'helmet'
 import useragent from 'express-useragent'
+import paranoia from 'objection-paranoia'
 
 const app = express()
 const environment = process.env.NODE_ENV || 'development'
@@ -46,6 +47,7 @@ app.use(
   express.static(path.join(__dirname, '../storages/uploads'))
 )
 
+paranoia.register(objection)
 Model.knex(db)
 routes(app)
 
