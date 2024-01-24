@@ -7,6 +7,10 @@ class User extends Model {
     return 'users'
   }
 
+  static get softDelete () {
+    return true
+  }
+
   $formatJson (json) {
     json = super.$formatJson(json)
 

@@ -7,7 +7,7 @@ export const registerValidator = checkSchema({
       options: { min: 5, max: 50 },
       errorMessage: 'Name should be between 5 to 50 characters'
     },
-    isEmail: false
+    notEmpty: true
   },
   username: {
     errorMessage: 'Invalid username',
@@ -15,7 +15,7 @@ export const registerValidator = checkSchema({
       options: { min: 5, max: 50 },
       errorMessage: 'Name should be between 5 to 50 characters'
     },
-    isEmpty: false
+    notEmpty: true
   },
   email: {
     errorMessage: 'Email required',
@@ -24,6 +24,7 @@ export const registerValidator = checkSchema({
   },
   password: {
     errorMessage: 'Password is required',
+    notEmpty: true,
     isLength: {
       options: { min: 8 },
       errorMessage: 'Password should be at least 8 chars'
@@ -31,6 +32,7 @@ export const registerValidator = checkSchema({
   },
   password_confirmation: {
     errorMessage: 'Password is required',
+    notEmpty: true,
     isLength: {
       options: { min: 8 },
       errorMessage: 'Password should be at least 8 chars'

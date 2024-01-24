@@ -7,25 +7,29 @@ import adminAuth from '../middleware/adminAuth'
 
 const router = express.Router()
 
-router.get('/', authMiddleware, controller.list)
+router.get('/profile', authMiddleware, controller.listTeacherCourse)
+router.get('/profile/:id', authMiddleware, controller.showTeacherCourse)
+
+router.get('/', controller.list)
+router.get('/:id', controller.show)
+
 router.post(
-  '/',
+  '/profile',
   authMiddleware,
   courseValidator,
   adminAuth(['admin', 'teacher']),
   upload.any(),
   controller.create
 )
-router.get('/:id', authMiddleware, controller.show)
 router.put(
-  '/:id',
+  '/profile/:id',
   authMiddleware,
   adminAuth(['admin', 'teacher']),
   upload.any(),
   controller.update
 )
 router.delete(
-  '/:id',
+  '/profile/:id',
   adminAuth(['admin', 'teacher']),
   authMiddleware,
   controller.destroy
