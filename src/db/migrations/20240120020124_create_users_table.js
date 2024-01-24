@@ -9,8 +9,9 @@ exports.up = function (knex) {
     table.string('username')
     table.string('email').unique()
     table.enu('role', ['admin', 'teacher', 'student']).defaultTo('student')
+    table.string('password_encrypted')
     table.timestamp('deleted_at')
-    table.string('password_encrypted'), table.timestamps(true, true)
+    table.timestamps(true, true)
   })
 }
 

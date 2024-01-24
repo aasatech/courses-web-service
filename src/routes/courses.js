@@ -9,6 +9,7 @@ const router = express.Router()
 
 router.get('/', controller.list)
 router.get('/:id', controller.show)
+
 router.post(
   '/',
   authMiddleware,
