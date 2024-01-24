@@ -9,7 +9,7 @@ const createCourse = () => ({
   summary: faker.lorem.sentence(),
   category_id: randomNumber(1, 20),
   user_id: randomNumber(1, 10),
-  image: faker.image.url()
+  image: '/uploads/' + randomNumber(1, 6) + '.jpg'
 })
 
 exports.seed = async function (knex) {

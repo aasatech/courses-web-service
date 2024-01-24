@@ -10,11 +10,25 @@ import path from 'path'
 
 export const list = async (req, res) => {
   try {
-    const courses = await Course.query().withGraphJoined(
-      '[tags,chapters.[lessons]]'
-    )
+    const pages = req.query.pages || 0
+
+    const filter = req.query.filter
+
+    const courses = await Course.query().page(pages, 5)
 
     res.status(200).json(courses)
+  } catch (error) {
+    res.status(500).json({ error: error.message })
+  }
+}
+
+export const listWithChildren = async (req, res) => {
+  try {
+    const coursesWithChildren = await Course.query()
+      .withGraphJoined('[tags,chapters.[lessons]]')
+      .page(pages, 10)
+
+    res.status(200).json(coursesWithChildren)
   } catch (error) {
     res.status(500).json({ error: error.message })
   }
@@ -56,7 +70,7 @@ export const create = async (req, res) => {
     let courseImage = null
     if (file.length) {
       if (file[0].fieldname === 'image') {
-        courseImage = `/storages/uploads/${file[0].filename}`
+        courseImage = `/uploads/${file[0].filename}`
       }
     }
 
@@ -103,7 +117,7 @@ export const create = async (req, res) => {
                   )
 
                   if (foundImage) {
-                    lessonImage = `/storages/uploads/${foundImage.filename}`
+                    lessonImage = `/uploads/${foundImage.filename}`
                   }
                 }
 
@@ -151,7 +165,7 @@ export const update = async (req, res) => {
 
     if (file) {
       if (file[0].fieldname === 'image') {
-        courseImage = `/storages/uploads/${file[0].filename}`
+        courseImage = `/uploads/${file[0].filename}`
         const oldPath = path.join(__dirname, '../../../', course.image)
 
         removeFile(oldPath)
@@ -234,7 +248,7 @@ export const update = async (req, res) => {
                   )
 
                   if (foundImage) {
-                    lessonImage = `/storages/uploads/${foundImage.filename}`
+                    lessonImage = `/uploads/${foundImage.filename}`
 
                     // remove old file
                     if (lessonData.id) {

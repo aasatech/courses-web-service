@@ -7,7 +7,7 @@ const randomNumber = (min, max) => {
 const createLesson = () => ({
   name: faker.lorem.words({ min: 3, max: 5 }),
   content: faker.lorem.text(),
-  image: faker.image.url(),
+  image: '/uploads/' + randomNumber(1, 6) + '.jpg',
   chapter_id: randomNumber(1, 80)
 })
 
