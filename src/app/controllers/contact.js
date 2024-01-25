@@ -1,13 +1,16 @@
 import { sendEmail } from '../../config/mail'
-import User from '../models/User'
+import Contact from '../models/Contact'
 
 export const contact = async (req, res) => {
   try {
-    const { email, name } = req.body
+    const { email, name, comment } = req.body
 
-    // const user = await User.query().findOne({ email })
-
-    // if (!user) res.status(404).json({ message: 'Email not found' })
+    await Contact.query().insert({
+      email,
+      name,
+      comment,
+      subject: null
+    })
 
     await sendEmail(email, `Send testing email to ${name}`, 'Contact')
     res.status(201).json({ message: 'success' })
