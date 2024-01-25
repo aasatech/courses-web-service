@@ -30,7 +30,7 @@ export const sendEmail = async (email, subject, text) => {
       to: email,
       template: 'email',
       subject: subject,
-      html: text
+      text: text
     })
     console.log('email send successfully')
   } catch (error) {
