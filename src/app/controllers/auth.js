@@ -2,6 +2,8 @@ import User from '../models/User'
 import { generateToken } from '../../config/jwt'
 import { validationResult } from 'express-validator'
 import _ from 'lodash'
+import 'dotenv/config'
+import { sendEmail } from '../../config/mail'
 
 export const register = async (req, res) => {
   try {
@@ -61,6 +63,24 @@ export const login = async (req, res) => {
     const token = await generateToken(user)
 
     res.status(200).json({ token })
+  } catch (error) {
+    res.status(500).json({ error: error.message })
+  }
+}
+
+export const resetPassword = async (req, res) => {
+  try {
+    const { email } = req.body
+
+    const user = await User.query().findOne({ email })
+
+    if (!user) res.status(404).json({ message: 'Email not found' })
+
+    const link = `${process.env.BASE_URL}/auth/reset-password/${user.id}`
+
+    await sendEmail(user.email, 'Password reset', link)
+
+    res.send('password reset link sent to your email account')
   } catch (error) {
     res.status(500).json({ error: error.message })
   }
