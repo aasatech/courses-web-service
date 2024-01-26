@@ -10,7 +10,7 @@ exports.seed = async function (knex) {
     .then(async function () {
       const tags = []
 
-      for (let i = 0; i < 30; i++) {
+      for (let i = 0; i < 20; i++) {
         tags.push(createTag())
       }
       return await knex('tags').insert(tags)

@@ -11,11 +11,11 @@ class Course extends Model {
     },
 
     filterCategories (query, categoryIds) {
-      if (categoryIds.length) query.whereIn('category_id', categoryIds)
+      if (categoryIds.length > 0) query.whereIn('category_id', categoryIds)
     },
 
     filterTags (query, tags) {
-      if (tags.length) query.joinRelated('tags').whereIn('tags.id', tags)
+      if (tags.length > 0) query.joinRelated('tags').whereIn('tags.id', tags)
     },
 
     orderByDate (query, order) {
