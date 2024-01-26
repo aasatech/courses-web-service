@@ -4,13 +4,15 @@ import _ from 'lodash'
 
 export const list = async (req, res) => {
   try {
-    let users = await User.query()
+    let users = User.query().withGraphFetched('providers')
 
     if (req.query.deleted) {
-      users = await User.query().withDeleted()
+      users.withDeleted()
     }
 
-    res.status(200).json(users)
+    const result = await users
+
+    res.status(200).json(result)
   } catch (error) {
     res.status(500).json({ error: error.message })
   }

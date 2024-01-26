@@ -12,7 +12,7 @@ exports.up = function (knex) {
       .integer('category_id')
       .references('id')
       .inTable('categories')
-      .onDelete('cascade')
+      .onDelete('set null')
     table
       .integer('user_id')
       .references('id')

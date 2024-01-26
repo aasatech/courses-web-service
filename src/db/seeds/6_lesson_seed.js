@@ -8,7 +8,7 @@ const createLesson = () => ({
   name: faker.lorem.words({ min: 3, max: 5 }),
   content: faker.lorem.text(),
   image: '/uploads/' + randomNumber(1, 6) + '.jpg',
-  chapter_id: randomNumber(1, 80)
+  chapter_id: randomNumber(1, 120)
 })
 
 exports.seed = async function (knex) {
@@ -18,7 +18,7 @@ exports.seed = async function (knex) {
     .then(async function () {
       const lessons = []
 
-      for (let i = 0; i < 200; i++) {
+      for (let i = 0; i < 250; i++) {
         lessons.push(createLesson())
       }
 

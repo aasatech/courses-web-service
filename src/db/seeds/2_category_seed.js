@@ -12,7 +12,7 @@ exports.seed = async function (knex) {
     .then(async function () {
       const categories = []
 
-      for (let i = 0; i < 20; i++) {
+      for (let i = 0; i < 10; i++) {
         categories.push(createCategory())
       }
 

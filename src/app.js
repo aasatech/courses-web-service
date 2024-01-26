@@ -12,6 +12,8 @@ import compression from 'compression'
 import helmet from 'helmet'
 import useragent from 'express-useragent'
 import paranoia from 'objection-paranoia'
+import passport from 'passport'
+import session from 'express-session'
 
 const app = express()
 const environment = process.env.NODE_ENV || 'development'
@@ -40,15 +42,24 @@ app.use(
 )
 app.use(express.json())
 app.use(params.expressMiddleware())
-
 app.use(express.static(path.join(__dirname, '../public')))
 app.use(
   '/storages/uploads',
   express.static(path.join(__dirname, '../storages/uploads'))
 )
+app.use(
+  session({
+    secret: 'my-secret-key',
+    resave: false,
+    saveUninitialized: true
+  })
+)
+app.use(passport.initialize())
+app.use(passport.session())
 
 paranoia.register(objection)
 Model.knex(db)
+
 routes(app)
 
 export default app

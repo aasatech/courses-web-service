@@ -16,8 +16,7 @@ export const list = async (req, res) => {
     const categoryIds = Array.from(req.query.category_ids || [])
     const orderBy = req.query.orderBy
 
-    console.log(tags)
-
+    console.log(categoryIds)
     let courses = await Course.query()
       .modify('filterTags', tags)
       .modify('filterCategories', categoryIds)
