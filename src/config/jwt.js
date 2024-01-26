@@ -1,30 +1,30 @@
-import jwt from 'jsonwebtoken';
-import {authConfig} from '.';
+import jwt from 'jsonwebtoken'
+import { authConfig } from '.'
 
-export const generateToken = (user) => {
+export const generateToken = user => {
   return new Promise((resolve, reject) => {
     jwt.sign(
       {
         id: user.id,
-        email: user.email,
+        email: user.email
       },
       authConfig.secret,
       {
         algorithm: authConfig.algorithms[0],
-        expiresIn: "2days",
+        expiresIn: '2days'
       },
       (err, token) => {
         if (err) {
-          return reject(err);
+          return reject(err)
         }
         if (!token) {
-          return new Error("Empty token");
+          return new Error('Empty token')
         }
 
-        return resolve(token);
+        return resolve(token)
       }
-    );
-  });
-};
+    )
+  })
+}
 
-export const verifyToken = async (token) => jwt.verify(token, authConfig.secret);
+export const verifyToken = async token => jwt.verify(token, authConfig.secret)
