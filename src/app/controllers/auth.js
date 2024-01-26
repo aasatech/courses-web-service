@@ -92,9 +92,8 @@ const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET
 const FACEBOOK_APP_ID = process.env.FACEBOOK_APP_ID
 const FACEBOOK_APP_SECRET = process.env.FACEBOOK_APP_SECRET
 
-const GOOGLE_REDIRECT_URI = 'http://localhost:5000/api/v1/auth/google/callback'
-const FACEBOOK_REDIRECT_URI =
-  'http://localhost:5000/api/v1/auth/facebook/callback'
+const GOOGLE_REDIRECT_URI = process.env.CALL_BACK_URI + '/google/callback'
+const FACEBOOK_REDIRECT_URI = process.env.CALL_BACK_URI + '/facebook/callback'
 
 export const googleLogin = (req, res) => {
   const url = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${GOOGLE_CLIENT_ID}&redirect_uri=${GOOGLE_REDIRECT_URI}&response_type=code&scope=profile email`
