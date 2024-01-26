@@ -28,19 +28,6 @@ class User extends Model {
   comparePassword (password) {
     return bcrypt.compareSync(password, this.password_encrypted)
   }
-
-  static get relationMappings () {
-    return {
-      providers: {
-        relation: Model.HasManyRelation,
-        modelClass: __dirname + '/AuthProvider',
-        join: {
-          from: 'users.id',
-          to: 'authentication_provider.user_id'
-        }
-      }
-    }
-  }
 }
 
 export default User
