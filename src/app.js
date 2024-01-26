@@ -50,7 +50,7 @@ app.use(
 app.use(
   session({
     secret: 'my-secret-key',
-    resave: false,
+    resave: true,
     saveUninitialized: true
   })
 )
