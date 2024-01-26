@@ -4,7 +4,7 @@ import _ from 'lodash'
 
 export const list = async (req, res) => {
   try {
-    let users = User.query().withGraphFetched('providers')
+    let users = User.query()
 
     if (req.query.deleted) {
       users.withDeleted()
