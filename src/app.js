@@ -33,7 +33,7 @@ if (isProduction) {
   sessionOptions = {
     secret: process.env.SECRET_KEY_BASE,
     resave: false,
-    saveUninitialized: true,
+    saveUninitialized: false,
     store: new RedisStore({ client: redis }),
     cookie: { secure: false }
   }
@@ -41,7 +41,7 @@ if (isProduction) {
   sessionOptions = {
     secret: process.env.SECRET_KEY_BASE,
     resave: false,
-    saveUninitialized: true,
+    saveUninitialized: false,
     cookie: { maxAge: 86400000 }
   }
 }
