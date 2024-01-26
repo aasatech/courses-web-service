@@ -49,11 +49,13 @@ app.use(
 )
 app.use(
   session({
-    secret: 'my-secret-key',
-    resave: true,
-    saveUninitialized: true
+    secret: 'keyboard cat',
+    resave: false,
+    saveUninitialized: true,
+    cookie: { secure: true }
   })
 )
+
 app.use(passport.initialize())
 app.use(passport.session())
 
