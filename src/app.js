@@ -12,6 +12,7 @@ import compression from 'compression'
 import helmet from 'helmet'
 import useragent from 'express-useragent'
 import paranoia from 'objection-paranoia'
+import cookieParser from 'cookie-parser'
 
 const app = express()
 const environment = process.env.NODE_ENV || 'development'
@@ -38,6 +39,7 @@ app.use(
     }
   })
 )
+app.use(cookieParser())
 app.use(express.json())
 app.use(params.expressMiddleware())
 app.use(express.static(path.join(__dirname, '../public')))

@@ -33,7 +33,7 @@ class User extends Model {
     return {
       providers: {
         relation: Model.HasManyRelation,
-        modelClass: __dirname + '/AuthenticationProvider',
+        modelClass: __dirname + '/AuthProvider',
         join: {
           from: 'users.id',
           to: 'authentication_provider.user_id'
