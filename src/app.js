@@ -7,16 +7,11 @@ import objection, { Model } from 'objection'
 import methodOverride from 'method-override'
 import routes from './config/routes'
 import knexCofig from './config/database'
-import redis from './config/redis'
 import params from './packages/strong-params'
 import compression from 'compression'
 import helmet from 'helmet'
 import useragent from 'express-useragent'
 import paranoia from 'objection-paranoia'
-import passport from 'passport'
-import session from 'express-session'
-
-let RedisStore = require('connect-redis')(session)
 
 const app = express()
 const environment = process.env.NODE_ENV || 'development'
@@ -24,27 +19,6 @@ const db = require('knex')(knexCofig[environment])
 const env = process.env.NODE_ENV || 'development'
 
 export const port = process.env.PORT || 5000
-
-global.isProduction = env !== 'development'
-
-let sessionOptions
-
-if (isProduction) {
-  sessionOptions = {
-    secret: process.env.SECRET_KEY_BASE,
-    resave: false,
-    saveUninitialized: false,
-    store: new RedisStore({ client: redis }),
-    cookie: { secure: false }
-  }
-} else {
-  sessionOptions = {
-    secret: process.env.SECRET_KEY_BASE,
-    resave: false,
-    saveUninitialized: false,
-    cookie: { maxAge: 86400000 }
-  }
-}
 
 const logMode = app.get('env') === 'development' ? 'dev' : 'combined'
 app.use(useragent.express())
@@ -71,9 +45,6 @@ app.use(
   '/storages/uploads',
   express.static(path.join(__dirname, '../storages/uploads'))
 )
-app.use(session(sessionOptions))
-app.use(passport.initialize())
-app.use(passport.session())
 
 paranoia.register(objection)
 Model.knex(db)
