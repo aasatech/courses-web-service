@@ -23,8 +23,8 @@ export const registerValidator = checkSchema({
     isEmail: true,
     notEmpty: true,
     custom: {
-      options: value => {
-        const emailExist = User.query().findOne({ email: value })
+      options: async (value, { req }) => {
+        const emailExist = await User.query().findOne({ email: value })
 
         if (emailExist) {
           return Promise.reject('Email address already exist')

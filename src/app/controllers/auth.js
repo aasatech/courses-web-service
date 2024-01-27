@@ -96,20 +96,12 @@ const GOOGLE_REDIRECT_URI = process.env.CALL_BACK_URI + '/google/callback'
 const FACEBOOK_REDIRECT_URI = process.env.CALL_BACK_URI + '/facebook/callback'
 
 export const googleLogin = (req, res) => {
-  const url = `https://accounts.google.com/o/oauth2/v2/auth?
-  client_id=${GOOGLE_CLIENT_ID}
-  &redirect_uri=${GOOGLE_REDIRECT_URI}
-  &response_type=code
-  &scope=profile email`
+  const url = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${GOOGLE_CLIENT_ID}&redirect_uri=${GOOGLE_REDIRECT_URI}&response_type=code&scope=profile email`
   res.redirect(url)
 }
 
 export const facebookLogin = (req, res) => {
-  const url = `https://www.facebook.com/dialog/oauth?
-  client_id=${FACEBOOK_APP_ID}
-  &redirect_uri=${FACEBOOK_REDIRECT_URI}
-  &response_type=code
-  &scope=email`
+  const url = `https://www.facebook.com/v13.0/dialog/oauth?client_id=${FACEBOOK_APP_ID}&redirect_uri=${FACEBOOK_REDIRECT_URI}&scope=email`
   res.redirect(url)
 }
 
