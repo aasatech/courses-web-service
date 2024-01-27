@@ -87,33 +87,31 @@ export const resetPassword = async (req, res) => {
   }
 }
 
-const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID
-const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET
-const FACEBOOK_APP_ID = process.env.FACEBOOK_APP_ID
-const FACEBOOK_APP_SECRET = process.env.FACEBOOK_APP_SECRET
+const clientID = process.env.GOOGLE_CLIENT_ID
+const clientSecret = process.env.GOOGLE_CLIENT_SECRET
+const appId = process.env.FACEBOOK_APP_ID
+const appSecret = process.env.FACEBOOK_APP_SECRET
 
-const GOOGLE_REDIRECT_URI = process.env.CALL_BACK_URI + '/google/callback'
-const FACEBOOK_REDIRECT_URI = process.env.CALL_BACK_URI + '/facebook/callback'
+const google_url = process.env.CALL_BACK_URI + '/auth/google/callback'
+const facebook_url = process.env.CALL_BACK_URI + '/auth/facebook/callback'
 
-export const googleLogin = (req, res) => {
-  const url = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${GOOGLE_CLIENT_ID}&redirect_uri=${GOOGLE_REDIRECT_URI}&response_type=code&scope=profile email`
-  res.redirect(url)
+export const googleLogin = async (req, res) => {
+  try {
+    const url = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${clientID}&redirect_uri=${google_url}&response_type=code&scope=profile email`
+    res.redirect(url)
+  } catch (error) {
+    res.status(500).json(error.message)
+  }
 }
 
-export const facebookLogin = (req, res) => {
-  const url = `https://www.facebook.com/v13.0/dialog/oauth?client_id=${FACEBOOK_APP_ID}&redirect_uri=${FACEBOOK_REDIRECT_URI}&scope=email`
-  res.redirect(url)
-}
-
-export const googleCallback = async (req, res) => {
+export const googleCallBack = async (req, res) => {
   const { code } = req.query
-
   try {
     const { data } = await axios.post('https://oauth2.googleapis.com/token', {
-      client_id: GOOGLE_CLIENT_ID,
-      client_secret: GOOGLE_CLIENT_SECRET,
+      client_id: clientID,
+      client_secret: clientSecret,
       code,
-      redirect_uri: GOOGLE_REDIRECT_URI,
+      redirect_uri: google_url,
       grant_type: 'authorization_code'
     })
 
@@ -125,22 +123,28 @@ export const googleCallback = async (req, res) => {
         headers: { Authorization: `Bearer ${access_token}` }
       }
     )
+
     const user = await insertUser(profile)
 
     const token = await generateToken(user)
 
     res.status(200).json({ token })
   } catch (error) {
-    res.status(500).json({ error: error.message })
+    res.status(500).json(error.message)
   }
 }
 
-export const facebookCallback = async (req, res) => {
+export const facebookLogin = async (req, res) => {
+  const url = `https://www.facebook.com/v13.0/dialog/oauth?client_id=${appId}&redirect_uri=${facebook_url}&scope=email`
+  res.redirect(url)
+}
+
+export const facebookCallBack = async (req, res) => {
   const { code } = req.query
 
   try {
     const { data } = await axios.get(
-      `https://graph.facebook.com/v13.0/oauth/access_token?client_id=${FACEBOOK_APP_ID}&client_secret=${FACEBOOK_APP_SECRET}&code=${code}&redirect_uri=${FACEBOOK_REDIRECT_URI}`
+      `https://graph.facebook.com/v13.0/oauth/access_token?client_id=${appId}&client_secret=${appSecret}&code=${code}&redirect_uri=${facebook_url}`
     )
 
     const { access_token } = data
@@ -155,7 +159,7 @@ export const facebookCallback = async (req, res) => {
 
     res.status(200).json({ token })
   } catch (error) {
-    res.redirect('../../auth/failed')
+    console.error('Error:', error.response.data.error)
   }
 }
 

@@ -8,7 +8,7 @@ router.post('/login', validator.loginValidator, controller.login)
 
 router.get('/google', controller.googleLogin)
 router.get('/facebook', controller.facebookLogin)
-router.get('/google/callback', controller.googleCallback)
-router.get('/facebook/callback', controller.facebookCallback)
-
+router.get('/google/callback', controller.googleCallBack)
+router.get('/facebook/callback', controller.facebookCallBack)
+router.get('/failed', (req, res) => res.json({ message: 'Login failed' }))
 export default router
