@@ -162,7 +162,7 @@ export const facebookCallback = async (req, res) => {
 const insertUser = async profile => {
   const existingUser = await User.query().findOne({ email: profile.email })
 
-  let user = existingUser
+  let user = await existingUser
 
   if (!existingUser) {
     const createdUser = await User.query().insert({
