@@ -7,7 +7,7 @@ const randomNumber = (min, max) => {
 const createChapter = () => ({
   name: faker.lorem.words({ min: 3, max: 5 }),
   summary: faker.lorem.sentence(),
-  course_id: randomNumber(1, 50)
+  course_id: randomNumber(1, 80)
 })
 
 exports.seed = async function (knex) {
@@ -17,7 +17,7 @@ exports.seed = async function (knex) {
     .then(async function () {
       const chapters = []
 
-      for (let i = 0; i < 120; i++) {
+      for (let i = 0; i < 300; i++) {
         chapters.push(createChapter())
       }
 

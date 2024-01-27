@@ -96,12 +96,20 @@ const GOOGLE_REDIRECT_URI = process.env.CALL_BACK_URI + '/google/callback'
 const FACEBOOK_REDIRECT_URI = process.env.CALL_BACK_URI + '/facebook/callback'
 
 export const googleLogin = (req, res) => {
-  const url = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${GOOGLE_CLIENT_ID}&redirect_uri=${GOOGLE_REDIRECT_URI}&response_type=code&scope=profile email`
+  const url = `https://accounts.google.com/o/oauth2/v2/auth?
+  client_id=${GOOGLE_CLIENT_ID}
+  &redirect_uri=${GOOGLE_REDIRECT_URI}
+  &response_type=code
+  &scope=profile email`
   res.redirect(url)
 }
 
 export const facebookLogin = (req, res) => {
-  const url = `https://www.facebook.com/v13.0/dialog/oauth?client_id=${FACEBOOK_APP_ID}&redirect_uri=${FACEBOOK_REDIRECT_URI}&scope=email`
+  const url = `https://www.facebook.com/dialog/oauth?
+  client_id=${FACEBOOK_APP_ID}
+  &redirect_uri=${FACEBOOK_REDIRECT_URI}
+  &response_type=code
+  &scope=email`
   res.redirect(url)
 }
 
@@ -127,7 +135,6 @@ export const googleCallback = async (req, res) => {
     )
     const user = await insertUser(profile)
 
-    console.log(user)
     const token = await generateToken(user)
 
     res.status(200).json({ token })
@@ -146,12 +153,11 @@ export const facebookCallback = async (req, res) => {
 
     const { access_token } = data
 
-    console.log(data)
     const { data: profile } = await axios.get(
       `https://graph.facebook.com/v13.0/me?fields=name,email&access_token=${access_token}`
     )
 
-    const user = insertUser(profile)
+    const user = await insertUser(profile)
 
     const token = await generateToken(user)
 

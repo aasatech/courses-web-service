@@ -2,11 +2,20 @@ const { faker } = require('@faker-js/faker')
 const bcrypt = require('bcryptjs')
 
 const saltRound = 12
-const createUser = () => ({
+const createTeacher = () => ({
   name: faker.internet.displayName(),
   username: faker.internet.userName(),
   email: faker.internet.email(),
-  password_encrypted: bcrypt.hashSync('1234567890', saltRound)
+  password_encrypted: bcrypt.hashSync('1234567890', saltRound),
+  role: 'teacher'
+})
+
+const createStudent = () => ({
+  name: faker.internet.displayName(),
+  username: faker.internet.userName(),
+  email: faker.internet.email(),
+  password_encrypted: bcrypt.hashSync('1234567890', saltRound),
+  role: 'student'
 })
 
 exports.seed = async function (knex) {
@@ -15,8 +24,11 @@ exports.seed = async function (knex) {
     .del()
     .then(async function () {
       const users = []
+      for (let i = 0; i < 5; i++) {
+        users.push(createTeacher())
+      }
       for (let i = 0; i < 20; i++) {
-        users.push(createUser())
+        users.push(createStudent())
       }
       return await knex('users').insert(users)
     })

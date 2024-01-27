@@ -1,4 +1,5 @@
 import { checkSchema } from 'express-validator'
+import User from '../models/User'
 
 export const registerValidator = checkSchema({
   name: {
@@ -20,7 +21,18 @@ export const registerValidator = checkSchema({
   email: {
     errorMessage: 'Email required',
     isEmail: true,
-    notEmpty: true
+    notEmpty: true,
+    custom: {
+      options: value => {
+        const emailExist = User.query().findOne({ email: value })
+
+        if (emailExist) {
+          return Promise.reject('Email address already exist')
+        }
+
+        return value
+      }
+    }
   },
   password: {
     errorMessage: 'Password is required',

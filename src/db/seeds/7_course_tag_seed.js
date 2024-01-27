@@ -3,7 +3,7 @@ const randomNumber = (min, max) => {
 }
 
 const createCourseTag = () => ({
-  course_id: randomNumber(1, 50),
+  course_id: randomNumber(1, 80),
   tag_id: randomNumber(1, 20)
 })
 
@@ -14,7 +14,7 @@ exports.seed = async function (knex) {
     .then(async function () {
       const course_tags = []
 
-      for (let i = 0; i < 150; i++) {
+      for (let i = 0; i < 300; i++) {
         course_tags.push(createCourseTag())
       }
 
