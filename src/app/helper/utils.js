@@ -158,9 +158,9 @@ export function pagination (total, perPage, currentPage) {
 
 export const paging = req => {
   let page = req.query.page || 1
-  let perPage = req.query.per_page || 20
+  let perPage = req.query.per_page || 10
   if (isNaN(Number(perPage))) {
-    perPage = 20
+    perPage = 10
   }
   if (isNaN(Number(page))) {
     page - 1
