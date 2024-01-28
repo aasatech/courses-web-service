@@ -11,6 +11,10 @@ class Lesson extends Model {
     delete json.updated_at
     return json
   }
+
+  get imageUrl () {
+    return `${process.env.BASE_STORAGE_URL}${this.image}`
+  }
 }
 
 export default Lesson

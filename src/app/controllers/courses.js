@@ -7,7 +7,7 @@ import Chapter from '../models/Chapter'
 import Lesson from '../models/Lesson'
 import Tag from '../models/Tag'
 import CourseTag from '../models/CourseTag'
-import { listSerializer } from '../serializers/course'
+import { listSerializer, showSerializer } from '../serializers/course'
 import { paging, pagination } from '../helper/utils'
 
 export const list = async (req, res) => {
@@ -24,24 +24,11 @@ export const list = async (req, res) => {
       .modify('filterTags', tags)
       .modify('filterCategories', categoryIds)
       .modify('orderByDate', orderBy)
-      .distinctOn('id')
       .page(page, perPage)
 
     const meta = pagination(courses.total, perPage, page)
 
     res.status(200).json({ data: courses.results.map(listSerializer), meta })
-  } catch (error) {
-    res.status(500).json({ error: error.message })
-  }
-}
-
-export const listWithChildren = async (req, res) => {
-  try {
-    const coursesWithChildren = await Course.query()
-      .withGraphJoined('[tags,chapters.[lessons]] ')
-      .page(pages, 10)
-
-    res.status(200).json(coursesWithChildren)
   } catch (error) {
     res.status(500).json({ error: error.message })
   }
@@ -57,7 +44,7 @@ export const show = async (req, res) => {
 
     if (!course) return res.status(404).json({ message: 'Course not found' })
 
-    res.status(200).json(course)
+    res.status(200).json(showSerializer(course))
   } catch (error) {
     res.status(500).json({ error: error.message })
   }
