@@ -6,29 +6,32 @@ class Course extends Model {
     return 'courses'
   }
 
-  $formatJson (json) {
-    json = super.$formatJson(json)
+  // $formatJson (json) {
+  //   json = super.$formatJson(json)
 
-    delete json.created_at
-    delete json.updated_at
-    return json
-  }
+  //   delete json.created_at
+  //   delete json.updated_at
+  //   return json
+  // }
 
   get imageUrl () {
     return `${process.env.BASE_STORAGE_URL}${this.image}`
   }
 
   static modifiers = {
-    defaultSelects (query) {
-      query.select('id', 'name', 'summary', 'image', 'created_at', 'updated_at')
-    },
-
     filterCategories (query, categoryIds) {
       if (categoryIds.length > 0) query.whereIn('category_id', categoryIds)
     },
 
     filterTags (query, tags) {
-      if (tags.length > 0) query.joinRelated('tags').whereIn('tags.id', tags)
+      if (tags.length > 0) {
+        query.whereExists(function () {
+          this.select('*')
+            .from('course_tags')
+            .whereRaw('course_tags.course_id = courses.id')
+            .whereIn('course_tags.tag_id', tags)
+        })
+      }
     },
 
     orderByDate (query, order) {

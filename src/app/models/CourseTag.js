@@ -7,9 +7,21 @@ class CourseTag extends Model {
 
   static get relationMappings () {
     return {
-      courseTags: {
-        relation: Model.ManyToManyRelation,
-        modelClass: __dirname + '/Tag'
+      course: {
+        relation: Model.BelongsToOneRelation,
+        modelClass: __dirname + '/Course',
+        join: {
+          from: 'course_tags.course_id',
+          to: 'courses.id'
+        }
+      },
+      tag: {
+        relation: Model.BelongsToOneRelation,
+        modelClass: __dirname + '/Tag',
+        join: {
+          from: 'course_tags.tag_id',
+          to: 'tags.id'
+        }
       }
     }
   }

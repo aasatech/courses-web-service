@@ -21,6 +21,19 @@ class Tag extends Model {
   static get softDelete () {
     return true
   }
+
+  static get relationMappings () {
+    return {
+      courses: {
+        relation: Model.HasManyRelation,
+        modelClass: __dirname + '/CourseTag',
+        join: {
+          from: 'tags.id',
+          to: 'course_tags.tag_id'
+        }
+      }
+    }
+  }
 }
 
 export default Tag
