@@ -170,7 +170,7 @@ export const paging = req => {
   }
   return {
     page,
-    perPage
+    perPage: Number(perPage)
   }
 }
 

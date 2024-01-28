@@ -1,8 +1,21 @@
+import 'dotenv/config'
 import { Model } from 'objection'
 
 class Course extends Model {
   static get tableName () {
     return 'courses'
+  }
+
+  $formatJson (json) {
+    json = super.$formatJson(json)
+
+    delete json.created_at
+    delete json.updated_at
+    return json
+  }
+
+  get imageUrl () {
+    return `${process.env.BASE_STORAGE_URL}${this.image}`
   }
 
   static modifiers = {

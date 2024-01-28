@@ -1,20 +1,28 @@
-import { Model } from "objection";
+import { Model } from 'objection'
 
-class Chapter extends Model{
-  static get tableName(){
-    return "chapters"
+class Chapter extends Model {
+  static get tableName () {
+    return 'chapters'
   }
 
-  static get relationMappings(){
-    return{
+  $formatJson (json) {
+    json = super.$formatJson(json)
+
+    delete json.created_at
+    delete json.updated_at
+    return json
+  }
+
+  static get relationMappings () {
+    return {
       lessons: {
         relation: Model.HasManyRelation,
-        modelClass: __dirname+"/Lesson",
+        modelClass: __dirname + '/Lesson',
         join: {
-          from: "chapters.id",
-          to: "lessons.chapter_id"
+          from: 'chapters.id',
+          to: 'lessons.chapter_id'
         }
-      },
+      }
     }
   }
 }

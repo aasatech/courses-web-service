@@ -1,30 +1,35 @@
+import _ from 'lodash'
+import fs from 'fs'
+import path from 'path'
+import { validationResult } from 'express-validator'
 import Course from '../models/Course'
 import Chapter from '../models/Chapter'
 import Lesson from '../models/Lesson'
 import Tag from '../models/Tag'
 import CourseTag from '../models/CourseTag'
-import { validationResult } from 'express-validator'
-import _ from 'lodash'
-import fs from 'fs'
-import path from 'path'
+import { listSerializer } from '../serializers/course'
+import { paging, pagination } from '../helper/utils'
 
 export const list = async (req, res) => {
   try {
-    const pages = req.query.pages || 0
-    const pageSize = req.query.pageSize || 5
+    const { page, perPage } = paging(req)
+
     const tags = Array.from(req.query.tags || [])
     const categoryIds = Array.from(req.query.category_ids || [])
     const orderBy = req.query.orderBy
 
-    console.log(categoryIds)
+    console.log(req.query.tags)
+
     let courses = await Course.query()
       .modify('filterTags', tags)
       .modify('filterCategories', categoryIds)
       .modify('orderByDate', orderBy)
       .distinctOn('id')
-      .page(pages, pageSize)
+      .page(page, perPage)
 
-    res.status(200).json(courses)
+    const meta = pagination(courses.total, perPage, page)
+
+    res.status(200).json({ data: courses.results.map(listSerializer), meta })
   } catch (error) {
     res.status(500).json({ error: error.message })
   }
