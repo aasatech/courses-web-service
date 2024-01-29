@@ -14,6 +14,8 @@ export const list = async (req, res) => {
   try {
     const { page, perPage } = paging(req)
 
+    console.log(page, perPage)
+
     const tags = Array.from(req.query.tags || [])
     const categoryIds = Array.from(req.query.category_ids || [])
     const orderBy = req.query.orderBy

@@ -10,11 +10,11 @@ export const courseValidator = checkSchema({
     errorMessage: 'Category is required'
   },
   'chapters.*.name': {
-    notEmpty: true,
+    isEmpty: false,
     errorMessage: 'Chapter name is required'
   },
   'chapters.*.lessons.*.name': {
-    notEmpty: true,
+    isEmpty: false,
     errorMessage: 'Lesson name is required'
   }
 })
