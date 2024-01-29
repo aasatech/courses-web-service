@@ -11,7 +11,7 @@ router.get('/', controller.list)
 router.get('/:id', controller.show)
 
 router.post(
-  '/profile',
+  '/',
   authMiddleware,
   courseValidator,
   adminAuth(['admin', 'teacher']),
@@ -19,14 +19,14 @@ router.post(
   controller.create
 )
 router.put(
-  '/profile/:id',
+  '/:id',
   authMiddleware,
   adminAuth(['admin', 'teacher']),
   upload.any(),
   controller.update
 )
 router.delete(
-  '/profile/:id',
+  '/:id',
   adminAuth(['admin', 'teacher']),
   authMiddleware,
   controller.destroy

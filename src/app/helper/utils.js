@@ -140,6 +140,7 @@ export const storeLoginSession = (
 }
 export const keyBy = (array, key) =>
   (array || []).reduce((r, x) => ({ ...r, [key ? x[key] : x]: x }), {})
+
 export function pagination (total, perPage, currentPage) {
   const totalPage = Math.ceil(total / perPage)
   const next = currentPage + 2 <= totalPage ? currentPage + 2 : totalPage

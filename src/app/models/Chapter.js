@@ -5,13 +5,14 @@ class Chapter extends Model {
     return 'chapters'
   }
 
-  $formatJson (json) {
-    json = super.$formatJson(json)
+  // $formatJson (json) {
+  //   json = super.$formatJson(json)
 
-    delete json.created_at
-    delete json.updated_at
-    return json
-  }
+  //   delete json.created_at
+  //   delete json.updated_at
+  //   return json
+  // }
+
 
   static get relationMappings () {
     return {
