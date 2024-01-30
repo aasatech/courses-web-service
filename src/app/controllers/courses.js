@@ -76,9 +76,11 @@ export const create = async (req, res) => {
       name: data.name,
       summary: data.summary,
       user_id: id,
+      subject:data.subject,
       category_id: data.category_id,
       image: courseImage
     })
+
 
     // tags
     if (data.tags.length) {
@@ -172,6 +174,7 @@ export const update = async (req, res) => {
     await course.$query(trx).patchAndFetch({
       name: data.name,
       summary: data.summary,
+      subject:data.subject,
       category_id: data.category_id,
       image: courseImage
     })

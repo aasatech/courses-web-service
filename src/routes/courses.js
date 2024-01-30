@@ -13,8 +13,8 @@ router.get('/:id', controller.show)
 router.post(
   '/',
   authMiddleware,
-  courseValidator,
   adminAuth(['admin', 'teacher']),
+  courseValidator,
   upload.any(),
   controller.create
 )
