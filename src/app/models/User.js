@@ -11,13 +11,24 @@ class User extends Model {
     return true
   }
 
+  static modifiers = {
+    filter (query, data) {
+      if (data) {
+        query
+          .whereLike('name', `%${data}%`)
+          .orWhereLike('username', `%${data}%`)
+          .orWhereLike('email', `%${data}%`)
+      }
+    }
+  }
+
   $formatJson (json) {
     json = super.$formatJson(json)
 
-    delete json.deleted_at
     delete json.password_encrypted
     delete json.created_at
     delete json.updated_at
+    delete json.deleted_at
     return json
   }
 

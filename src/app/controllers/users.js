@@ -8,8 +8,11 @@ export const list = async (req, res) => {
     const { page, perPage } = paging(req)
     const orderByDate = req.query.order_by || 'asc'
     const deleted = req.query.deleted
+    const name = req.query.name
+
     let users = User.query()
       .orderBy('created_at', orderByDate)
+      .modify('filter', name)
       .page(page, perPage)
 
     if (deleted) users.withDeleted()
@@ -42,13 +45,12 @@ export const create = async (req, res) => {
   try {
     const { name, username, email, password } = req.body
 
-    const result = validationResult(req)
-
-    if (!result.isEmpty()) {
-      return res.status(400).json({ errors: _.groupBy(result.array(), 'path') })
-    }
-
     const password_encrypted = User.generatePassword(password)
+
+    const existingEmail = await User.query().findOne({ email })
+
+    if (existingEmail)
+      return res.status(400).json({ message: 'Email already exist' })
 
     const user = await User.query().insert({
       name,

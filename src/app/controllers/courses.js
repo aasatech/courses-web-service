@@ -25,8 +25,8 @@ export const list = async (req, res) => {
       .modify('filterTags', tags)
       .modify('filterCategories', categoryIds)
       .modify('orderByDate', orderBy)
-      .modify('searchCourse',search)
-      .modify('fromDate',fromDate,toDate)
+      .modify('searchCourse', search)
+      .modify('filterDate', fromDate, toDate)
       .page(page, perPage)
 
     const meta = pagination(courses.total, perPage, page)
@@ -52,21 +52,6 @@ export const show = async (req, res) => {
     res.status(500).json({ error: error.message })
   }
 }
-
-// export const searchCourse = async (req,res) => {
-//   try {
-    
-//     const search = req.query.q
-
-//     const result = await Course.query()
-//     .whereLike('name',`%${search}%`)
-
-//     res.status(200).json(result)
-
-//   } catch (error) {
-//     res.status(500).json({msg:error.message})
-//   }
-// }
 
 export const create = async (req, res) => {
   const trx = await Course.startTransaction()
