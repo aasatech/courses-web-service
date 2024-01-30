@@ -17,11 +17,16 @@ export const list = async (req, res) => {
     const tags = Array.from(req.query.tags || [])
     const categoryIds = Array.from(req.query.category_ids || [])
     const orderBy = req.query.orderBy
+    const search = req.query.search
+    const fromDate = req.query.fromDate
+    const toDate = req.query.toDate
 
     let courses = await Course.query()
       .modify('filterTags', tags)
       .modify('filterCategories', categoryIds)
       .modify('orderByDate', orderBy)
+      .modify('searchCourse',search)
+      .modify('fromDate',fromDate,toDate)
       .page(page, perPage)
 
     const meta = pagination(courses.total, perPage, page)
@@ -48,20 +53,20 @@ export const show = async (req, res) => {
   }
 }
 
-export const searchCourse = async (req,res) => {
-  try {
+// export const searchCourse = async (req,res) => {
+//   try {
     
-    const search = req.query.q
+//     const search = req.query.q
 
-    const result = await Course.query()
-    .whereLike('name',`%${search}%`)
+//     const result = await Course.query()
+//     .whereLike('name',`%${search}%`)
 
-    res.status(200).json(result)
+//     res.status(200).json(result)
 
-  } catch (error) {
-    res.status(500).json({msg:error.message})
-  }
-}
+//   } catch (error) {
+//     res.status(500).json({msg:error.message})
+//   }
+// }
 
 export const create = async (req, res) => {
   const trx = await Course.startTransaction()

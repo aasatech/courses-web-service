@@ -11,6 +11,7 @@ class Course extends Model {
   }
 
   static modifiers = {
+
     filterCategories (query, categoryIds) {
       if (categoryIds.length > 0) query.whereIn('category_id', categoryIds)
     },
@@ -28,7 +29,21 @@ class Course extends Model {
 
     orderByDate (query, order) {
       if (order) query.orderBy('id', order)
+    },
+
+    searchCourse(query,searchData){
+      if(searchData){
+        query.whereLike('name',`%${searchData}%`)
+      }
+    },
+
+    fromDate (query, fromDate,toDate) {
+      if (fromDate) {
+        // query.where('created_at', '>=', fromDate); 
+        query.whereBetween('created_at',[fromDate,toDate])
+      }
     }
+
   }
 
   static get relationMappings () {
