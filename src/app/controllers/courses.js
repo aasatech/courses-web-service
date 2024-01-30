@@ -48,6 +48,21 @@ export const show = async (req, res) => {
   }
 }
 
+export const searchCourse = async (req,res) => {
+  try {
+    
+    const search = req.query.q
+
+    const result = await Course.query()
+    .whereLike('name',`%${search}%`)
+
+    res.status(200).json(result)
+
+  } catch (error) {
+    res.status(500).json({msg:error.message})
+  }
+}
+
 export const create = async (req, res) => {
   const trx = await Course.startTransaction()
   try {

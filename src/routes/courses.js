@@ -7,6 +7,8 @@ import adminAuth from '../middleware/adminAuth'
 
 const router = express.Router()
 
+
+router.get('/search',controller.searchCourse)
 router.get('/', controller.list)
 router.get('/:id', controller.show)
 
