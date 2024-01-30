@@ -8,8 +8,7 @@ export const contact = async (req, res) => {
     await Contact.query().insert({
       email,
       name,
-      comment,
-      subject: null
+      comment
     })
 
     await sendEmail(email, `Send testing email to ${name}`, 'Contact')
