@@ -23,14 +23,14 @@ const transporter = nodemailer.createTransport({
 })
 transporter.use('compile', hbs(handlebarOption))
 
-export const sendEmail = async (email, subject, text) => {
+export const sendEmail = async (email, name, subject, comment) => {
   try {
     transporter.sendMail({
       from: process.env.GMAIL_APP_USER,
       to: email,
       template: 'email',
       subject: subject,
-      text: text
+      text: comment
     })
     console.log('email send successfully')
   } catch (error) {

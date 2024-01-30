@@ -8,8 +8,8 @@ exports.up = function (knex) {
     table.increments('id').primary(),
       table.string('name'),
       table.string('email'),
-      table.text('comment'),
-      table.timestamps(true, true)
+      table.string('subject')
+    table.text('comment'), table.timestamps(true, true)
   })
 }
 
