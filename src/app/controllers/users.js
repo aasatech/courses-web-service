@@ -1,18 +1,24 @@
 import { validationResult } from 'express-validator'
 import User from '../models/User'
 import _ from 'lodash'
+import { pagination, paging } from '../helper/utils'
 
 export const list = async (req, res) => {
   try {
+    const { page, perPage } = paging(req)
+    const orderByDate = req.query.order_by || 'asc'
+    const deleted = req.query.deleted
     let users = User.query()
+      .orderBy('created_at', orderByDate)
+      .page(page, perPage)
 
-    if (req.query.deleted) {
-      users.withDeleted()
-    }
+    if (deleted) users.withDeleted()
 
     const result = await users
 
-    res.status(200).json(result)
+    const meta = pagination(result.total, perPage, page)
+
+    res.status(200).json({ data: result.results, meta })
   } catch (error) {
     res.status(500).json({ error: error.message })
   }
