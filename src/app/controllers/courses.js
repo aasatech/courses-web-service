@@ -60,7 +60,8 @@ export const create = async (req, res) => {
     const { id } = req.decoded
     const file = req.files
 
-    console.log(data)
+
+    // console.log(file)
     const validateResult = validationResult(req)
 
     if (!validateResult.isEmpty()) {
@@ -71,10 +72,15 @@ export const create = async (req, res) => {
 
     // image
     let courseImage = null
-    if (file.length) {
-      if (file[0].fieldname === 'image') {
-        courseImage = `/uploads/${file[0].filename}`
-      }
+    let courseVideo = null
+
+    if(file){
+      file.map((f) => {
+        if(f.fieldname === 'image') courseImage = `/uploads/${f.filename}`
+
+        if(f.fieldname === 'video') courseVideo = `/uploads/${f.filename}`
+        
+      })
     }
 
     const course = await Course.query(trx).insert({
@@ -82,6 +88,7 @@ export const create = async (req, res) => {
       summary: data.summary,
       user_id: id,
       category_id: data.category_id,
+      video:courseVideo,
       image: courseImage
     })
 
@@ -112,16 +119,20 @@ export const create = async (req, res) => {
               chapterData.lessons.map(async (lessonData, lessonIndex) => {
                 // check image fieldname
                 let lessonImage = null
-                let expectFieldname = `chapters[${chapterIndex}][lessons][${lessonIndex}][image]`
+                let lessonVideo = null
 
-                if (file) {
-                  const foundImage = file.find(
-                    f => f.fieldname === expectFieldname
-                  )
+                let imageFieldname = `chapters[${chapterIndex}][lessons][${lessonIndex}][image]`
+                let videoFieldname = `chapters[${chapterIndex}][lessons][${lessonIndex}][video]`
 
-                  if (foundImage) {
-                    lessonImage = `/uploads/${foundImage.filename}`
-                  }
+
+                if(file){
+                  file.map((f) => {
+
+                    if(f.fieldname === imageFieldname) lessonImage = `/uploads/${f.filename}`
+            
+                    if(f.fieldname === videoFieldname) lessonVideo = `/uploads/${f.filename}`
+                    
+                  })
                 }
 
                 lessonImageIndex++
@@ -131,7 +142,8 @@ export const create = async (req, res) => {
                   name: lessonData.name,
                   content: lessonData.content,
                   chapter_id: chapter.id,
-                  image: lessonImage
+                  image: lessonImage,
+                  video:lessonVideo
                 })
               })
             )
@@ -168,8 +180,8 @@ export const update = async (req, res) => {
 
     if (file) {
       if (file[0].fieldname === 'image') {
-        courseImage = `/uploads/${file[0].filename}`
-        const oldPath = path.join(__dirname, '../../../', course.image)
+        courseImage = `/uploads/images/${file[0].filename}`
+        const oldPath = path.join(__dirname, '../../../../', course.image)
 
         removeFile(oldPath)
       }
@@ -251,7 +263,7 @@ export const update = async (req, res) => {
                   )
 
                   if (foundImage) {
-                    lessonImage = `/uploads/${foundImage.filename}`
+                    lessonImage = `/uploads/images/${foundImage.filename}`
 
                     // remove old file
                     if (lessonData.id) {
@@ -261,7 +273,7 @@ export const update = async (req, res) => {
 
                       const oldPath = path.join(
                         __dirname,
-                        '../../..',
+                        '../../../../',
                         oldLessonFile.image
                       )
 

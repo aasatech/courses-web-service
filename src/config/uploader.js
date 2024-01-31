@@ -24,7 +24,7 @@ if (process.env.STORAGE === 's3') {
 }
 
 const checkAvatarFileType = (req, file, cb) => {
-  const fileTypes = /jpeg|png|jpg/
+  const fileTypes = /jpeg|png|jpg|mp4/
   const extName = fileTypes.test(
     path.extname(file.originalname).toLocaleLowerCase()
   )
@@ -41,6 +41,17 @@ const getBucketPath = file => {
   if (file.fieldname === 'avatar') {
     return 'uploads/avatar/'
   }
+
+
+  console.log(file);
+  if(file.fieldname === 'image'){
+    return 'uploads/images'
+  }
+
+  if(file.fieldname === 'video'){
+    return 'uploads/vidoes'
+  }
+
   return 'uploads/attachments/'
 }
 
