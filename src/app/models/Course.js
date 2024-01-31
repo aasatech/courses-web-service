@@ -37,16 +37,14 @@ class Course extends Model {
     },
 
     filterDate (query, fromDate, toDate) {
-      if (fromDate) {
-        query.where('created_at', fromDate)
+      if (fromDate && !toDate) {
+        query.where('created_at', new Date(fromDate).toISOString())
       }
-
-      if (toDate) {
-        query.where('created_at', toDate)
-      }
-
       if (fromDate && toDate) {
-        query.whereBetween('created_at', [fromDate, toDate])
+        query.whereBetween('created_at', [
+          new Date(fromDate).toISOString(),
+          new Date(toDate).toISOString()
+        ])
       }
     }
   }

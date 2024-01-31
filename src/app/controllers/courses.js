@@ -18,8 +18,8 @@ export const list = async (req, res) => {
     const categoryIds = Array.from(req.query.category_ids || [])
     const orderBy = req.query.orderBy
     const search = req.query.search
-    const fromDate = req.query.fromDate
-    const toDate = req.query.toDate
+    const fromDate = req.query.from_date
+    const toDate = req.query.to_date
 
     let courses = await Course.query()
       .modify('filterTags', tags)
