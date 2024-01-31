@@ -8,6 +8,7 @@ exports.up = function (knex) {
     table.string('name')
     table.text('content')
     table.string('image')
+    table.string('video')
     table
       .integer('chapter_id')
       .references('id')

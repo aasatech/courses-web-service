@@ -13,6 +13,7 @@ const createCourse = () => ({
   category_id: randomNumber(1, 10),
   user_id: randomNumber(1, 5),
   image: '/uploads/' + randomNumber(1, 6) + '.jpg',
+  video: '/uploads/' + 'v' + randomNumber(1, 4) + '.mp4',
   created_at: dayjs(faker.date.between({from:fromDate,to:toDate})).format()
 })
 

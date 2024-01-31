@@ -8,6 +8,7 @@ const createLesson = () => ({
   name: faker.lorem.words({ min: 3, max: 5 }),
   content: faker.lorem.text(),
   image: '/uploads/' + randomNumber(1, 6) + '.jpg',
+  video: '/uploads/v' + randomNumber(1, 4) + '.mp4',
   chapter_id: randomNumber(1, 300)
 })
 

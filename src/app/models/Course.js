@@ -10,6 +10,10 @@ class Course extends Model {
     return `${process.env.BASE_STORAGE_URL}${this.image}`
   }
 
+  get videoUrl () {
+    return `${process.env.BASE_STORAGE_URL}${this.video}`
+  }
+
   static modifiers = {
     filterCategories (query, categoryIds) {
       if (categoryIds.length > 0) query.whereIn('category_id', categoryIds)
