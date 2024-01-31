@@ -25,16 +25,16 @@ const configTimezone = {
 resetPgDateParsers()
 const connection = {
   client: 'pg',
-  connection: process.env.DATABASE_URL,
+  // connection: process.env.DATABASE_URL,
+  connection: {
+    host: process.env.DATABASE_HOST || 'localhost',
+    user: process.env.DATABASE_USERNAME,
+    password: process.env.DATABASE_PASSWORD || '',
+    database: process.env.DATABASE_NAME,
+    URL: process.env.DATABASE_URL,
+    timezone: 'Japan'
+  },
   pool: { min: 0, max: 10, ...configTimezone }
-  // connection: {
-  //   host: process.env.DATABASE_HOST || 'localhost',
-  //   user: process.env.DATABASE_USERNAME,
-  //   password: process.env.DATABASE_PASSWORD || '',
-  //   database: process.env.DATABASE_NAME,
-  //   URL: process.env.DATABASE_URL,
-  //   timezone: 'Japan'
-  // },
 }
 
 const rootPath = process.cwd()
