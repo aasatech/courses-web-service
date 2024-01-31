@@ -7,15 +7,16 @@ export const list = async (req, res) => {
   try {
     const { page, perPage } = paging(req)
     const orderByDate = req.query.order_by || 'asc'
-    const deleted = req.query.deleted
     const name = req.query.name
-
+    const withDeleted = req.query.with_deleted
+    const deletedOnly = req.query.deleted_only
+    
     let users = User.query()
-      .orderBy('created_at', orderByDate)
-      .modify('filter', name)
-      .page(page, perPage)
-
-    if (deleted) users.withDeleted()
+    .orderBy('id', orderByDate)
+    .modify('filter', name)
+    .modify('getWithDeleted',withDeleted)
+    .modify('getOnlyDeleted',deletedOnly)
+    .page(page, perPage)
 
     const result = await users
 
