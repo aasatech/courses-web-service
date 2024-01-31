@@ -7,11 +7,20 @@ class Course extends Model {
   }
 
   get imageUrl () {
-    return `${process.env.BASE_STORAGE_URL}${this.image}`
+    if(this.image){
+      return `${process.env.BASE_STORAGE_URL}${this.image}`
+    }
+
+    return null
+    
   }
 
   get videoUrl () {
-    return `${process.env.BASE_STORAGE_URL}${this.video}`
+    if(this.video){
+      return `${process.env.BASE_STORAGE_URL}${this.video}`
+    }
+
+    return null
   }
 
   static modifiers = {
