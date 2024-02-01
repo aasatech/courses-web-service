@@ -2,6 +2,7 @@ import { validationResult } from 'express-validator'
 import User from '../models/User'
 import _ from 'lodash'
 import { pagination, paging } from '../helper/utils'
+import { raw } from 'objection'
 
 export const list = async (req, res) => {
   try {
@@ -11,15 +12,22 @@ export const list = async (req, res) => {
     const withDeleted = req.query.with_deleted
     const deletedOnly = req.query.deleted_only
     
-    console.log(withDeleted);
     let users = User.query()
     .orderBy('id', orderByDate)
-    .modify('filter', name,withDeleted)
+    .modify('filter', name,withDeleted,deletedOnly)
     .modify('getWithDeleted',withDeleted)
     .modify('getOnlyDeleted',deletedOnly)
     .page(page, perPage)
 
+
+    // if(deletedOnly){
+    //   users.where(raw('deleted_at is not null'))
+    // }else{
+    //   users.modify('getWithDeleted',withDeleted)
+    // } 
+    
     const result = await users
+
 
     const meta = pagination(result.total, perPage, page)
 
@@ -113,6 +121,12 @@ export const destroy = async (req, res) => {
     const { id } = req.params
 
     const user = await User.query().findById(id)
+
+    const deletedUser = await User.query().withDeleted().whereNotNull('deleted_at').findById(id)
+
+    if(deletedUser) return res.status(202).json({message:'User Already Deleted'})
+
+    console.log(deletedUser);
 
     if (!user) return res.status(404).json({ message: 'User not found' })
 

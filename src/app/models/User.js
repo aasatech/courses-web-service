@@ -1,4 +1,4 @@
-import { Model } from 'objection'
+import { Model,raw } from 'objection'
 import bcrypt from 'bcryptjs'
 
 const saltRound = 12
@@ -13,19 +13,19 @@ class User extends Model {
 
   static modifiers = {
 
-    filter (query, data,withDeleted) {
+    filter (query, data,withDeleted,deletedOnly) {
       if (data) {
-        query
-          .whereLike('name', `%${data}%`)
-          .orWhereLike('username', `%${data}%`)
-          .orWhereLike('email', `%${data}%`)
 
-          // if(!withDeleted){
-          //   query
-          //     .whereNotNull('deleted_at')
-          // }
+        query
+        .whereLike('name', `%${data}%`)
+        .orWhereLike('username', `%${data}%`)
+        .orWhereLike('email', `%${data}%`)
+
+        
+
       }
     },
+
 
     getWithDeleted(query,data){
       if(data){
@@ -33,9 +33,10 @@ class User extends Model {
       }
     },
 
-    getOnlyDeleted(query,data){
+    async getOnlyDeleted(query,data){
       if(data){
-        query.whereNotNull('deleted_at')
+        query.withDeleted().where(raw('deleted_at is not null'))
+        // console.log( await data);
       }
     }
   }
@@ -44,9 +45,9 @@ class User extends Model {
     json = super.$formatJson(json)
 
     delete json.password_encrypted
-    delete json.created_at
-    delete json.updated_at
-    delete json.deleted_at
+    // delete json.created_at
+    // delete json.updated_at
+    // delete json.deleted_at
     return json
   }
 

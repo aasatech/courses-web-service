@@ -7,9 +7,10 @@ class Lesson extends Model {
   $formatJson (json) {
     json = super.$formatJson(json)
 
-    // delete json.image
+    delete json.image
     delete json.created_at
     delete json.updated_at
+    delete json.video
     return json
   }
 
