@@ -13,12 +13,17 @@ class User extends Model {
 
   static modifiers = {
 
-    filter (query, data) {
+    filter (query, data,withDeleted) {
       if (data) {
         query
           .whereLike('name', `%${data}%`)
           .orWhereLike('username', `%${data}%`)
           .orWhereLike('email', `%${data}%`)
+
+          // if(!withDeleted){
+          //   query
+          //     .whereNotNull('deleted_at')
+          // }
       }
     },
 

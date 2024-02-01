@@ -11,9 +11,10 @@ export const list = async (req, res) => {
     const withDeleted = req.query.with_deleted
     const deletedOnly = req.query.deleted_only
     
+    console.log(withDeleted);
     let users = User.query()
     .orderBy('id', orderByDate)
-    .modify('filter', name)
+    .modify('filter', name,withDeleted)
     .modify('getWithDeleted',withDeleted)
     .modify('getOnlyDeleted',deletedOnly)
     .page(page, perPage)
