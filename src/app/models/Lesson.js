@@ -14,20 +14,19 @@ class Lesson extends Model {
   }
 
   get imageUrl () {
-    if(this.image){
-      return `${process.env.BASE_STORAGE_URL}${this.image}`
+    if(!this.image){
+      return null
     }
-
-    return null
+    return `${process.env.BASE_STORAGE_URL}${this.image}`
     
   }
 
   get videoUrl () {
-    if(this.video){
-      return `${process.env.BASE_STORAGE_URL}${this.video}`
+    if(!this.video){
+      return null
     }
-
-    return null
+    return `${process.env.BASE_STORAGE_URL}${this.video}`
+    
   }
 }
 
