@@ -21,6 +21,7 @@ export const register = async (req, res) => {
     if (existingUser) {
       return res.status(400).json({ message: 'Email already exist' })
     }
+    
 
     const encryptedPassword = User.generatePassword(password)
 
@@ -31,7 +32,9 @@ export const register = async (req, res) => {
       password_encrypted: encryptedPassword
     })
 
-    res.status(200).json(user)
+    const token = await generateToken(user)
+
+    res.status(200).json({user,token})
   } catch (error) {
     res.status(500).json({ error: error.message })
   }

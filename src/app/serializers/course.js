@@ -10,7 +10,7 @@ export const listSerializer = data => {
   data.created_at = convertDate(data.created_at)
   data.image_url = data.imageUrl
   data.video_url = data.videoUrl
-  return pick(data, 'id', 'name', 'summary', 'created_at', 'image_url','video_url')
+  return pick(data, 'id', 'name', 'summary', 'created_at', 'image_url','video_url','deleted_at')
 }
 
 export const showSerializer = data => {
@@ -32,6 +32,7 @@ export const showSerializer = data => {
     'video_url',
     'created_at',
     'updated_at',
+    'deleted_at',
     'tags',
     'user',
     'category',

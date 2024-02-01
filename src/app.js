@@ -13,6 +13,8 @@ import helmet from 'helmet'
 import useragent from 'express-useragent'
 import paranoia from 'objection-paranoia'
 import cookieParser from 'cookie-parser'
+import knex from 'knex'
+
 
 const app = express()
 const environment = process.env.NODE_ENV || 'development'

@@ -1,5 +1,10 @@
 const { faker } = require('@faker-js/faker')
 const bcrypt = require('bcryptjs')
+const dayjs = require('dayjs')
+
+
+const fromDate = new Date ('2020-01-30')
+const toDate = new Date ('2024-01-30')
 
 const saltRound = 12
 const createTeacher = () => ({
@@ -18,6 +23,15 @@ const createStudent = () => ({
   role: 'student'
 })
 
+const deleteUser = () => ({
+  name: faker.internet.displayName(),
+  username: faker.internet.userName(),
+  email: faker.internet.email(),
+  password_encrypted: bcrypt.hashSync('1234567890', saltRound),
+  role: 'student',
+  deleted_at: dayjs(faker.date.between({from:fromDate,to:toDate})).format()
+})
+
 exports.seed = async function (knex) {
   // Deletes ALL existing entries
   await knex('users')
@@ -29,6 +43,9 @@ exports.seed = async function (knex) {
       }
       for (let i = 0; i < 20; i++) {
         users.push(createStudent())
+      }
+      for (let i = 0; i < 5; i++) {
+        users.push(deleteUser())
       }
       return await knex('users').insert(users)
     })
