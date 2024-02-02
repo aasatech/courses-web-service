@@ -1,86 +1,84 @@
-import _ from 'lodash'
-import fs from 'fs'
-import path from 'path'
-import { validationResult } from 'express-validator'
-import Course from '../models/Course'
-import Chapter from '../models/Chapter'
-import Lesson from '../models/Lesson'
-import Tag from '../models/Tag'
-import CourseTag from '../models/CourseTag'
-import { listSerializer, showSerializer } from '../serializers/course'
-import { paging, pagination } from '../helper/utils'
+import _ from "lodash";
+import fs from "fs";
+import path from "path";
+import { validationResult } from "express-validator";
+import Course from "../models/Course";
+import Chapter from "../models/Chapter";
+import Lesson from "../models/Lesson";
+import Tag from "../models/Tag";
+import CourseTag from "../models/CourseTag";
+import { listSerializer, showSerializer } from "../serializers/course";
+import { paging, pagination } from "../helper/utils";
 
 export const list = async (req, res) => {
   try {
-    const { page, perPage } = paging(req)
+    const { page, perPage } = paging(req);
 
-    const tags = Array.from(req.query.tags || [])
-    const categoryIds = Array.from(req.query.category_ids || [])
-    const orderBy = req.query.orderBy
-    const search = req.query.search
-    const fromDate = req.query.from_date
-    const toDate = req.query.to_date
+    const tags = Array.from(req.query.tags || []);
+    const categoryIds = Array.from(req.query.category_ids || []);
+    const orderBy = req.query.orderBy;
+    const search = req.query.search;
+    const fromDate = req.query.from_date;
+    const toDate = req.query.to_date;
 
     let courses = await Course.query()
-      .modify('filterTags', tags)
-      .modify('filterCategories', categoryIds)
-      .modify('orderByDate', orderBy)
-      .modify('searchCourse', search)
-      .modify('filterDate', fromDate, toDate)
-      .page(page, perPage)
+      .modify("filterTags", tags)
+      .modify("filterCategories", categoryIds)
+      .modify("orderByDate", orderBy)
+      .modify("searchCourse", search)
+      .modify("filterDate", fromDate, toDate)
+      .page(page, perPage);
 
-    const meta = pagination(courses.total, perPage, page)
+    const meta = pagination(courses.total, perPage, page);
 
-    res.status(200).json({ data: courses.results.map(listSerializer), meta })
+    res.status(200).json({ data: courses.results.map(listSerializer), meta });
   } catch (error) {
-    res.status(500).json({ error: error.message })
+    res.status(500).json({ error: error.message });
   }
-}
+};
 
 export const show = async (req, res) => {
   try {
-    const { id } = req.params
+    const { id } = req.params;
 
     const course = await Course.query()
       .findById(id)
-      .withGraphJoined('[user, category,tags, chapters.[lessons]]')
+      .withGraphJoined("[user, category,tags, chapters.[lessons]]");
 
-    if (!course) return res.status(404).json({ message: 'Course not found' })
+    if (!course) return res.status(404).json({ message: "Course not found" });
 
-    res.status(200).json(showSerializer(course))
+    res.status(200).json(showSerializer(course));
   } catch (error) {
-    res.status(500).json({ error: error.message })
+    res.status(500).json({ error: error.message });
   }
-}
+};
 
 export const create = async (req, res) => {
-  const trx = await Course.startTransaction()
+  const trx = await Course.startTransaction();
   try {
-    const data = req.body
-    const { id } = req.decoded
-    const file = req.files
-
+    const data = req.body;
+    const { id } = req.decoded;
+    const file = req.files;
 
     // console.log(file)
-    const validateResult = validationResult(req)
+    const validateResult = validationResult(req);
 
     if (!validateResult.isEmpty()) {
       return res
         .status(400)
-        .json({ errors: _.groupBy(validateResult.array(), 'path') })
+        .json({ errors: _.groupBy(validateResult.array(), "path") });
     }
 
     // image
-    let courseImage = null
-    let courseVideo = null
+    let courseImage = null;
+    let courseVideo = null;
 
-    if(file){
+    if (file) {
       file.map((f) => {
-        if(f.fieldname === 'image') courseImage = `/uploads/${f.filename}`
+        if (f.fieldname === "image") courseImage = `/uploads/${f.filename}`;
 
-        if(f.fieldname === 'video') courseVideo = `/uploads/${f.filename}`
-        
-      })
+        if (f.fieldname === "video") courseVideo = `/uploads/${f.filename}`;
+      });
     }
 
     const course = await Course.query(trx).insert({
@@ -88,22 +86,22 @@ export const create = async (req, res) => {
       summary: data.summary,
       user_id: id,
       category_id: data.category_id,
-      video:courseVideo,
-      image: courseImage
-    })
+      video: courseVideo,
+      image: courseImage,
+    });
 
     // tags
     if (data.tags.length) {
-      tagsOperation(data.tags, course.id, trx)
+      tagsOperation(data.tags, course.id, trx);
     }
 
     // chapters
     if (data.chapters) {
       // lesson image
-      let lessonImageIndex
+      let lessonImageIndex;
 
       if (file.length) {
-        lessonImageIndex = file[0].fieldname === 'image' ? 1 : 0
+        lessonImageIndex = file[0].fieldname === "image" ? 1 : 0;
       }
       await Promise.all(
         data.chapters.map(async (chapterData, chapterIndex) => {
@@ -111,31 +109,30 @@ export const create = async (req, res) => {
           const chapter = await Chapter.query(trx).insert({
             name: chapterData.name,
             summary: chapterData.summary,
-            course_id: course.id
-          })
+            course_id: course.id,
+          });
 
           if (chapterData.lessons) {
             await Promise.all(
               chapterData.lessons.map(async (lessonData, lessonIndex) => {
                 // check image fieldname
-                let lessonImage = null
-                let lessonVideo = null
+                let lessonImage = null;
+                let lessonVideo = null;
 
-                let imageFieldname = `chapters[${chapterIndex}][lessons][${lessonIndex}][image]`
-                let videoFieldname = `chapters[${chapterIndex}][lessons][${lessonIndex}][video]`
+                let imageFieldname = `chapters[${chapterIndex}][lessons][${lessonIndex}][image]`;
+                let videoFieldname = `chapters[${chapterIndex}][lessons][${lessonIndex}][video]`;
 
-
-                if(file){
+                if (file) {
                   file.map((f) => {
+                    if (f.fieldname === imageFieldname)
+                      lessonImage = `/uploads/${f.filename}`;
 
-                    if(f.fieldname === imageFieldname) lessonImage = `/uploads/${f.filename}`
-            
-                    if(f.fieldname === videoFieldname) lessonVideo = `/uploads/${f.filename}`
-                    
-                  })
+                    if (f.fieldname === videoFieldname)
+                      lessonVideo = `/uploads/${f.filename}`;
+                  });
                 }
 
-                lessonImageIndex++
+                lessonImageIndex++;
 
                 // create lesson
                 await Lesson.query(trx).insert({
@@ -143,82 +140,82 @@ export const create = async (req, res) => {
                   content: lessonData.content,
                   chapter_id: chapter.id,
                   image: lessonImage,
-                  video:lessonVideo
-                })
+                  video: lessonVideo,
+                });
               })
-            )
+            );
           }
         })
-      )
+      );
     }
 
-    await trx.commit()
+    await trx.commit();
 
     const result = await Course.query()
       .findById(course.id)
-      .withGraphJoined('[tags, chapters.[lessons]]')
+      .withGraphJoined("[tags, chapters.[lessons]]");
 
-    res.status(201).json(result)
+    res.status(201).json(result);
   } catch (error) {
-    await trx.rollback()
-    res.status(500).json({ error: error.message })
+    await trx.rollback();
+    res.status(500).json({ error: error.message });
   }
-}
+};
 
 export const update = async (req, res) => {
-  const trx = await Course.startTransaction()
+  const trx = await Course.startTransaction();
   try {
-    const data = req.body
-    const { id } = req.params
-    const file = req.files
+    const data = req.body;
+    const { id } = req.params;
+    const file = req.files;
 
-    let course = await Course.query(trx).findById(id)
+    let course = await Course.query(trx).findById(id);
 
-    if (!course) return res.status(404).json({ message: 'Course not found' })
+    if (!course) return res.status(404).json({ message: "Course not found" });
 
-    let courseImage = course.image
+    let courseImage = course.image;
 
     if (file) {
-      if (file[0].fieldname === 'image') {
-        courseImage = `/uploads/images/${file[0].filename}`
-        const oldPath = path.join(__dirname, '../../../../', course.image)
+      if (file[0].fieldname === "image") {
+        courseImage = `/uploads/images/${file[0].filename}`;
+        const oldPath = path.join(__dirname, "../../../../", course.image);
 
-        removeFile(oldPath)
+        removeFile(oldPath);
       }
     }
     await course.$query(trx).patchAndFetch({
       name: data.name,
       summary: data.summary,
       category_id: data.category_id,
-      image: courseImage
-    })
+      image: courseImage,
+    });
 
     // tag
     if (data.tags.length) {
-      tagsOperation(data.tags, course.id, trx)
+      tagsOperation(data.tags, course.id, trx);
     }
 
     // chapters
     if (data.chapters) {
       // remove chapter
       const removeChapterIds = data.chapters
-        .filter(chapter => chapter._isDelete && chapter.id)
-        .map(chapter => chapter.id)
+        .filter((chapter) => chapter._isDelete && chapter.id)
+        .map((chapter) => chapter.id);
 
       if (removeChapterIds) {
-        await Chapter.query(trx).whereIn('id', removeChapterIds).delete()
+        await Chapter.query(trx).whereIn("id", removeChapterIds).delete();
       }
 
       // lesson image index
-      let lessonImageIndex
+      let lessonImageIndex;
 
       if (file) {
-        lessonImageIndex = file[0].fieldname === 'image' ? 1 : 0
+        lessonImageIndex = file[0].fieldname === "image" ? 1 : 0;
       }
 
       await Promise.all(
         data.chapters.map(async (chapterData, chapterIndex) => {
-          let chapter
+          let chapter;
 
           if (chapterData.id) {
             // update chapter
@@ -226,9 +223,9 @@ export const update = async (req, res) => {
               chapterData.id,
               {
                 name: chapterData.name,
-                summary: chapterData.summary
+                summary: chapterData.summary,
               }
-            )
+            );
           }
 
           if (!chapterData.id) {
@@ -236,48 +233,48 @@ export const update = async (req, res) => {
             chapter = await Chapter.query(trx).insert({
               name: chapterData.name,
               summary: chapterData.summary,
-              course_id: course.id
-            })
+              course_id: course.id,
+            });
           }
 
           //lesson
           if (chapterData.lessons) {
             // remove lesson
             const removeLessonIds = chapterData.lessons
-              .filter(lesson => lesson._isDelete && lesson.id)
-              .map(lesson => lesson.id)
+              .filter((lesson) => lesson._isDelete && lesson.id)
+              .map((lesson) => lesson.id);
 
             if (removeLessonIds) {
-              await Lesson.query(trx).whereIn('id', removeLessonIds).delete()
+              await Lesson.query(trx).whereIn("id", removeLessonIds).delete();
             }
 
             await Promise.all(
               chapterData.lessons.map(async (lessonData, lessonIndex) => {
-                let lessonImage = lessonData.image
-                let expectFieldname = `chapters[${chapterIndex}][lessons][${lessonIndex}][image]`
+                let lessonImage = lessonData.image;
+                let expectFieldname = `chapters[${chapterIndex}][lessons][${lessonIndex}][image]`;
 
                 if (file) {
                   // check image fieldname
                   const foundImage = file.find(
-                    f => f.fieldname === expectFieldname
-                  )
+                    (f) => f.fieldname === expectFieldname
+                  );
 
                   if (foundImage) {
-                    lessonImage = `/uploads/images/${foundImage.filename}`
+                    lessonImage = `/uploads/images/${foundImage.filename}`;
 
                     // remove old file
                     if (lessonData.id) {
                       const oldLessonFile = await Lesson.query(trx).findById(
                         lessonData.id
-                      )
+                      );
 
                       const oldPath = path.join(
                         __dirname,
-                        '../../../../',
+                        "../../../../",
                         oldLessonFile.image
-                      )
+                      );
 
-                      removeFile(oldPath)
+                      removeFile(oldPath);
                     }
                   }
                 }
@@ -287,8 +284,8 @@ export const update = async (req, res) => {
                   await Lesson.query(trx).patchAndFetchById(lessonData.id, {
                     name: lessonData.name,
                     content: lessonData.content,
-                    image: lessonImage
-                  })
+                    image: lessonImage,
+                  });
                 }
 
                 // create lesson
@@ -297,88 +294,88 @@ export const update = async (req, res) => {
                     name: lessonData.name,
                     content: lessonData.content,
                     chapter_id: chapter.id,
-                    image: lessonImage
-                  })
+                    image: lessonImage,
+                  });
                 }
 
-                lessonImageIndex++
+                lessonImageIndex++;
               })
-            )
+            );
           }
         })
-      )
+      );
     }
 
-    await trx.commit()
+    await trx.commit();
 
     const result = await Course.query()
       .findById(course.id)
-      .withGraphJoined('[tags, chapters.[lessons]]')
+      .withGraphJoined("[tags, chapters.[lessons]]");
 
-    res.status(200).json(result)
+    res.status(200).json(result);
   } catch (error) {
-    await trx.rollback()
-    res.status(500).json({ error: error.message })
+    await trx.rollback();
+    res.status(500).json({ error: error.message });
   }
-}
+};
 export const destroy = async (req, res) => {
   try {
-    const { id } = req.params
+    const { id } = req.params;
 
-    const course = await Course.query().deleteById(id)
+    const course = await Course.query().deleteById(id);
 
-    if (!course) return res.status(404).json({ message: 'Course not found' })
+    if (!course) return res.status(404).json({ message: "Course not found" });
 
-    res.status(200).json({ message: 'Successfully delete course' })
+    res.status(200).json({ message: "Successfully delete course" });
   } catch (error) {
-    res.status(500).json({ error: error.message })
+    res.status(500).json({ error: error.message });
   }
-}
+};
 
-const removeFile = async path => {
+const removeFile = async (path) => {
   try {
-    fs.unlinkSync(path)
-    console.log('successfully remove file')
+    fs.unlinkSync(path);
+    console.log("successfully remove file");
   } catch (error) {
-    console.log(`fail to remove file ${error}`)
+    console.log(`fail to remove file ${error}`);
   }
-}
+};
 
 const tagsOperation = async (tagsData, courseId, trx) => {
   // add existing tag
   const addExistingTags = tagsData
-    .filter(tag => tag.id && !tag._isDelete && !tag._isNew)
-    .map(async tag => {
+    .filter((tag) => tag.id && !tag._isDelete && !tag.__isNew__)
+    .map(async (tag) => {
       await CourseTag.query(trx).insert({
         course_id: courseId,
-        tag_id: tag.id
-      })
-    })
+        tag_id: tag.id,
+      });
+    });
 
   // create tag
   const newTags = tagsData
-    .filter(tag => tag._isNew)
-    .map(tag => ({ name: tag.name }))
+    .filter((tag) => tag.__isNew__)
+    .map((tag) => ({ name: tag.name }));
 
   if (newTags.length) {
-    const createdTags = await Tag.query(trx).insert(newTags)
-    createdTags.map(async tag => {
+    const createdTags = await Tag.query(trx).insert(newTags);
+    createdTags.map(async (tag) => {
       await CourseTag.query(trx).insert({
         course_id: courseId,
-        tag_id: tag.id
-      })
-    })
+        tag_id: tag.id,
+      });
+    });
   }
 
   // remove tag from course
-  const removeTags = tagsData.filter(tag => tag._isDelete)
+  const removeTags = tagsData.filter((tag) => tag._isDelete);
 
   if (removeTags.length) {
-    removeTags.map(async tag => {
+    removeTags.map(async (tag) => {
       await CourseTag.query(trx)
-        .where('course_id', courseId)
-        .where('tag_id', tag.id)
-        .delete()
-    })
+        .where("course_id", courseId)
+        .where("tag_id", tag.id)
+        .delete();
+    });
   }
-}
+};

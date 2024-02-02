@@ -1,106 +1,105 @@
-import 'dotenv/config'
-import { Model } from 'objection'
+import "dotenv/config";
+import { Model } from "objection";
 
 class Course extends Model {
-  static get tableName () {
-    return 'courses'
+  static get tableName() {
+    return "courses";
   }
 
-  get imageUrl () {
-    if(!this.image){
-      return null
+  get imageUrl() {
+    if (!this.image) {
+      return null;
     }
-    return `${process.env.BASE_STORAGE_URL}${this.image}`
-    
+    return `${process.env.BASE_STORAGE_URL}${this.image}`;
   }
 
-  get videoUrl () {
-    if(!this.video){
-      return null
+  get videoUrl() {
+    if (!this.video) {
+      return null;
     }
-    return `${process.env.BASE_STORAGE_URL}${this.video}`
+    return `${process.env.BASE_STORAGE_URL}${this.video}`;
   }
 
   static modifiers = {
-    filterCategories (query, categoryIds) {
-      if (categoryIds.length > 0) query.whereIn('category_id', categoryIds)
+    filterCategories(query, categoryIds) {
+      if (categoryIds.length > 0) query.whereIn("category_id", categoryIds);
     },
 
-    filterTags (query, tags) {
+    filterTags(query, tags) {
       if (tags.length > 0) {
         query.whereExists(function () {
-          this.select('*')
-            .from('course_tags')
-            .whereRaw('course_tags.course_id = courses.id')
-            .whereIn('course_tags.tag_id', tags)
-        })
+          this.select("*")
+            .from("course_tags")
+            .whereRaw("course_tags.course_id = courses.id")
+            .whereIn("course_tags.tag_id", tags);
+        });
       }
     },
 
-    orderByDate (query, order) {
-      if (order) query.orderBy('id', order)
+    orderByDate(query, order) {
+      if (order) query.orderBy("id", order);
     },
 
-    searchCourse (query, searchData) {
+    searchCourse(query, searchData) {
       if (searchData) {
-        query.whereLike('name', `%${searchData}%`)
+        query.whereLike("name", `%${searchData}%`);
       }
     },
 
-    filterDate (query, fromDate, toDate) {
+    filterDate(query, fromDate, toDate) {
       if (fromDate && !toDate) {
-        query.where('created_at', new Date(fromDate).toISOString())
+        query.where("created_at", new Date(fromDate).toISOString());
       }
       if (fromDate && toDate) {
-        query.whereBetween('created_at', [
+        query.whereBetween("created_at", [
           new Date(fromDate).toISOString(),
-          new Date(toDate).toISOString()
-        ])
+          new Date(toDate).toISOString(),
+        ]);
       }
-    }
-  }
+    },
+  };
 
-  static get relationMappings () {
+  static get relationMappings() {
     return {
       category: {
         relation: Model.HasOneRelation,
-        modelClass: __dirname + '/Category',
+        modelClass: __dirname + "/Category",
         join: {
-          from: 'courses.category_id',
-          to: 'categories.id'
-        }
+          from: "courses.category_id",
+          to: "categories.id",
+        },
       },
       user: {
         relation: Model.HasOneRelation,
-        modelClass: __dirname + '/User',
+        modelClass: __dirname + "/User",
         join: {
-          from: 'courses.user_id',
-          to: 'users.id'
-        }
+          from: "courses.user_id",
+          to: "users.id",
+        },
       },
 
       chapters: {
         relation: Model.HasManyRelation,
-        modelClass: __dirname + '/Chapter',
+        modelClass: __dirname + "/Chapter",
         join: {
-          from: 'courses.id',
-          to: 'chapters.course_id'
-        }
+          from: "courses.id",
+          to: "chapters.course_id",
+        },
       },
       tags: {
         relation: Model.ManyToManyRelation,
-        modelClass: __dirname + '/Tag',
+        modelClass: __dirname + "/Tag",
         join: {
-          from: 'courses.id',
+          from: "courses.id",
           through: {
-            from: 'course_tags.course_id',
-            to: 'course_tags.tag_id'
+            from: "course_tags.course_id",
+            to: "course_tags.tag_id",
           },
-          to: 'tags.id'
-        }
-      }
-    }
+          to: "tags.id",
+        },
+      },
+    };
   }
 }
 
-export default Course
+export default Course;
