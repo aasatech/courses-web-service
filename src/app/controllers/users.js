@@ -137,3 +137,23 @@ export const destroy = async (req, res) => {
     res.status(500).json({ error: error.message })
   }
 }
+
+export const retoreUser = async (req,res) => {
+  try {
+    
+    const { id } = req.params
+    
+    const user = await User.query().findById(id).withDeleted().whereNotNull('deleted_at')
+
+    if(!user) return res.status(404).json({msg:'User Not Found'})
+
+    await User.query().updateAndFetchById(id,{
+      deleted_at:null
+    })
+
+    res.status(200).json({msg:'Use restore successfully'})
+    
+  } catch (error) {
+    res.status(500).json(error.message)
+  }
+}
